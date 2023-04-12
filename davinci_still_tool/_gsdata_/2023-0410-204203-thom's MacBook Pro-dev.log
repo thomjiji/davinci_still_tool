@@ -1,0 +1,4 @@
+2023-04-10 20:42:04: == Sync Started by User Command
+2023-04-10 20:42:04: Start only 1 threads, limited by tasks to run
+2023-04-10 20:42:04: Copy Over '/Users/thom/code/davinci_still/davinci_still/still_grab.py' -> '/Library/Application Support/Blackmagic Design/DaVinci Resolve/Workflow Integration Plugins/still_grab.py' (2,550)
+2023-04-10 20:42:04: == Sync Complete. Time: 00:00:00, Speed: 0.00/s, OK: 1, Errors: 0

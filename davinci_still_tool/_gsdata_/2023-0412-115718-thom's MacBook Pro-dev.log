@@ -1,0 +1,7 @@
+2023-04-12 11:57:19: -- Analysis Started by On File Change Incremental
+2023-04-12 11:57:19: Changes: 1, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 8
+2023-04-12 11:57:19: Right to Left: Copy File: 1 
+2023-04-12 11:57:19: == Sync Started by On File Change Incremental
+2023-04-12 11:57:19: Start only 1 threads, limited by tasks to run
+2023-04-12 11:57:19: Copy Over '/Users/thom/code/davinci_still/davinci_still/still_grab.py' -> '/Library/Application Support/Blackmagic Design/DaVinci Resolve/Workflow Integration Plugins/still_grab.py' (4,122)
+2023-04-12 11:57:19: == Sync Complete. Time: 00:00:01, Speed: 0.00/s, OK: 1, Errors: 0

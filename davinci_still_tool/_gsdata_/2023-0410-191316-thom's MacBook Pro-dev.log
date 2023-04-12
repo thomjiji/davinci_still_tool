@@ -1,0 +1,5 @@
+2023-04-10 19:13:16: -- Analysis Started by User Command
+2023-04-10 19:13:16: L: State file does not exist: /Library/Application Support/Blackmagic Design/DaVinci Resolve/Workflow Integration Plugins/_gsdata_/_file_state_v4._gs
+2023-04-10 19:13:16: Changes: 38, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 40
+2023-04-10 19:13:16: Right to Left: Copy File: 2 Delete File: 36 
+2023-04-10 19:13:16: -- Analysis Complete. Time 00:00:00, Speed: Many files/s
