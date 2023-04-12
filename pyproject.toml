@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["thomjiji <hxy449999@gmail.com>"]
 readme = "README.md"
-packages = [{include = "davinci_still"}]
+packages = [{include = "davinci_still_tool"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
