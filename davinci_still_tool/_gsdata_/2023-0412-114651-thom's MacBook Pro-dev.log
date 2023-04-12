@@ -1,7 +1,0 @@
-2023-04-12 11:46:52: -- Analysis Started by On File Change Incremental
-2023-04-12 11:46:52: Changes: 1, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 8
-2023-04-12 11:46:52: Right to Left: Delete File: 1 
-2023-04-12 11:46:52: == Sync Started by On File Change Incremental
-2023-04-12 11:46:52: Delete File /Library/Application Support/Blackmagic Design/DaVinci Resolve/Workflow Integration Plugins/runner.py
-2023-04-12 11:46:52: Start only 0 threads, limited by tasks to run
-2023-04-12 11:46:52: == Sync Complete. Time: 00:00:01, Speed: 0.00/s, OK: 1, Errors: 0
