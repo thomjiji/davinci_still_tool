@@ -1,28 +1,4 @@
 from resolve_init import GetResolve
-import logging
-
-# Constants
-ALL_MARKERS = {}
-
-# Set up logger
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-# Create console handler and set level to debug
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-# Create formatter
-formatter = logging.Formatter(
-    "%(name)s %(levelname)s %(asctime)s at %(lineno)s: %(message)s",
-    datefmt="%H:%M:%S",
-)
-
-# Add formatter to ch
-ch.setFormatter(formatter)
-
-# Add ch to logger
-log.addHandler(ch)
 
 # Initialize Resolve base object.
 resolve = GetResolve()
@@ -45,9 +21,8 @@ countMarkerID = "Count Marker"
 browseOutputFileManagerID = "Browse File Manager"
 markerColorID = "Marker Color"
 deleteMarkersByColorID = "Delete Marker By Color"
-timelineID = "Timelines in the mediapool"
-copyCurrentTimelineMarkersID = "Copy current timeline markers"
-pasteTimelineMarkersID = "Paste the markers just copied"
+timelinesID = "Timelines in the mediapool"
+copyMarkersFromSpecifiedTimelineID = "Copy markers from specified timeline"
 
 win = dispatcher.AddWindow(
     {
@@ -120,15 +95,14 @@ win = dispatcher.AddWindow(
                     ),
                     ui.Button(
                         {
-                            "ID": copyCurrentTimelineMarkersID,
-                            "Text": "Copy Markers",
+                            "ID": copyMarkersFromSpecifiedTimelineID,
+                            "Text": "Copy Markers From",
                             "Weight": 0,
                         }
                     ),
-                    ui.Button(
+                    ui.ComboBox(
                         {
-                            "ID": pasteTimelineMarkersID,
-                            "Text": "Paste Markers",
+                            "ID": timelinesID,
                             "Weight": 0,
                         }
                     ),
@@ -168,10 +142,6 @@ marker_colors = [
     "Cream",
 ]
 
-# Get items of the UI
-itm = win.GetItems()
-itm[markerColorID].AddItems(marker_colors)
-
 
 # General functions
 def get_all_timeline():
@@ -185,11 +155,21 @@ def get_all_timeline():
     return all_timeline
 
 
-def get_timeline_by_name(self, timeline_name: str):
+def get_timeline_by_name(timeline_name: str):
     """Get timeline object by name."""
-    all_timeline = self.get_all_timeline()
+    all_timeline = get_all_timeline()
     timeline_dict = {timeline.GetName(): timeline for timeline in all_timeline}
     return timeline_dict.get(timeline_name)
+
+
+# Get items of the UI
+itm = win.GetItems()
+itm[markerColorID].AddItems(marker_colors)
+
+all_timelines: list[str] = [
+    timeline.GetName() for timeline in get_all_timeline()
+]
+itm[timelinesID].AddItems(all_timelines)
 
 
 # Events handlers
@@ -208,6 +188,8 @@ def on_click_marker_counter(ev):
         ] = f"There are {str(marker_number)} markers in this timeline."
     elif marker_number == 1:
         row.Text[0] = f"There is {str(marker_number)} marker in this timeline."
+    else:
+        row.Text[0] = f"There is no marker in this timeline."
     itm[pathTreeID].AddTopLevelItem(row)
 
 
@@ -220,31 +202,32 @@ def on_click_output_browse_button(ev):
 def on_click_delete_marker_by_color_button(ev):
     current_timeline = project.GetCurrentTimeline()
     markers_about_to_delete = itm[markerColorID].CurrentText
-    current_timeline.DeleteMarkersByColor(markers_about_to_delete)
+    if not bool(current_timeline.GetMarkers()):
+        row = itm[pathTreeID].NewItem()
+        row.Text[0] = f"There is no marker to delete!"
+        itm[pathTreeID].AddTopLevelItem(row)
+    else:
+        current_timeline.DeleteMarkersByColor(markers_about_to_delete)
 
 
-def on_click_copy_current_timeline_markers(ev):
+def on_click_copy_markers_from_specified_timeline(ev):
     current_timeline = project.GetCurrentTimeline()
-    ALL_MARKERS = current_timeline.GetMarkers()
-    row = itm[pathTreeID].NewItem()
-    row.Text[
-        0
-    ] = f"Copied current timeline {current_timeline.GetName()} markers!"
-    itm[pathTreeID].AddTopLevelItem(row)
+    markers_copy_target = get_timeline_by_name(itm[timelinesID].CurrentText)
+    all_markers = markers_copy_target.GetMarkers()  # type: ignore
 
-
-def on_click_paste_timeline_markers(ev):
-    current_timeline = project.GetCurrentTimeline()
     for color in marker_colors:
-        current_timeline.DeleteMarkersByColor(color)
-    for key in ALL_MARKERS:
+        if not bool(current_timeline.GetMarkers()):
+            break
+        else:
+            current_timeline.DeleteMarkersByColor(color)
+    for key in all_markers:
         current_timeline.AddMarker(
             key,
-            ALL_MARKERS[key]["color"],
-            ALL_MARKERS[key]["name"],
-            ALL_MARKERS[key]["note"],
-            ALL_MARKERS[key]["duration"],
-            ALL_MARKERS[key]["customData"],
+            all_markers[key]["color"],
+            all_markers[key]["name"],
+            all_markers[key]["note"],
+            all_markers[key]["duration"],
+            all_markers[key]["customData"],
         )
 
 
@@ -254,9 +237,8 @@ win.On[countMarkerID].Clicked = on_click_marker_counter
 win.On[browseOutputFileManagerID].Clicked = on_click_output_browse_button
 win.On[deleteMarkersByColorID].Clicked = on_click_delete_marker_by_color_button
 win.On[
-    copyCurrentTimelineMarkersID
-].Clicked = on_click_copy_current_timeline_markers
-win.On[pasteTimelineMarkersID].Clicked = on_click_paste_timeline_markers
+    copyMarkersFromSpecifiedTimelineID
+].Clicked = on_click_copy_markers_from_specified_timeline
 
 if __name__ == "__main__":
     win.Show()
