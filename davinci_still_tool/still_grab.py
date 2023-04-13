@@ -30,7 +30,7 @@ win = dispatcher.AddWindow(
         "Geometry": [
             500,
             300,
-            800,
+            400,
             600,
         ],
         "WindowTitle": "Grab Still",
@@ -78,33 +78,119 @@ win = dispatcher.AddWindow(
                     "Weight": 0,
                 },
                 [
-                    ui.ComboBox({"ID": markerColorID, "Weight": 0}),
-                    ui.Button(
+                    ui.VGroup(
                         {
-                            "ID": deleteMarkersByColorID,
-                            "Text": "Delete Marker",
+                            "Spacing": 5,
                             "Weight": 0,
-                        }
+                        },
+                        [
+                            ui.Label(
+                                {
+                                    "Text": "Count Marker",
+                                    "Weight": 0,
+                                    "Alignment": {
+                                        "AlignRight": True,
+                                        "AlignVCenter": True,
+                                    },
+                                }
+                            ),
+                            ui.VGap(1),
+                            ui.Label(
+                                {
+                                    "Text": "Remove Marker By Color",
+                                    "Weight": 0,
+                                    "Alignment": {
+                                        "AlignRight": True,
+                                        "AlignVCenter": True,
+                                    },
+                                }
+                            ),
+                            ui.VGap(1),
+                            ui.Label(
+                                {
+                                    "Text": "Copy Markers From",
+                                    "Weight": 0,
+                                    "Alignment": {
+                                        "AlignRight": True,
+                                        "AlignVCenter": True,
+                                    },
+                                }
+                            ),
+                        ],
                     ),
-                    ui.Button(
+                    ui.VGroup(
                         {
-                            "ID": countMarkerID,
-                            "Text": "Count Marker",
+                            "Spacing": 5,
                             "Weight": 0,
-                        }
+                        },
+                        [
+                            ui.Button(
+                                {
+                                    "ID": countMarkerID,
+                                    "Text": "Count Marker",
+                                    "Weight": 2,
+                                    "AlignRight": True,
+                                }
+                            ),
+                            ui.ComboBox({"ID": markerColorID, "Weight": 5}),
+                            ui.ComboBox(
+                                {
+                                    "ID": timelinesID,
+                                    "Weight": 0,
+                                }
+                            ),
+                        ],
                     ),
-                    ui.Button(
+                    ui.VGroup(
                         {
-                            "ID": copyMarkersFromSpecifiedTimelineID,
-                            "Text": "Copy Markers From",
+                            "Spacing": 5,
                             "Weight": 0,
-                        }
+                        },
+                        [
+                            ui.TabBar(
+                                {
+                                    "Text": "TabBar",
+                                }
+                            ),
+                            ui.Button(
+                                {
+                                    "ID": deleteMarkersByColorID,
+                                    "Text": "Delete Marker",
+                                    "Weight": 0,
+                                }
+                            ),
+                            ui.Button(
+                                {
+                                    "ID": copyMarkersFromSpecifiedTimelineID,
+                                    "Text": "Copy & Paste",
+                                    "Weight": 0,
+                                }
+                            ),
+                        ],
                     ),
-                    ui.ComboBox(
+                ],
+            ),
+            ui.VGap(1),
+            ui.Label(
+                {
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10,10,10)",
+                }
+            ),
+            ui.HGroup(
+                {
+                    "Spacing": 5,
+                    "Weight": 0,
+                },
+                [
+                    ui.Label(
                         {
-                            "ID": timelinesID,
+                            "Text": "Messages",
                             "Weight": 0,
-                        }
+                            "Alignment": {
+                                "AlignRight": True,
+                                "AlignVCenter": True,
+                            },
+                        },
                     ),
                 ],
             ),
@@ -166,9 +252,7 @@ def get_timeline_by_name(timeline_name: str):
 itm = win.GetItems()
 itm[markerColorID].AddItems(marker_colors)
 
-all_timelines: list[str] = [
-    timeline.GetName() for timeline in get_all_timeline()
-]
+all_timelines: list[str] = [timeline.GetName() for timeline in get_all_timeline()]
 itm[timelinesID].AddItems(all_timelines)
 
 
@@ -183,9 +267,7 @@ def on_click_marker_counter(ev):
     marker_number = len(current_timeline.GetMarkers())
     row = itm[pathTreeID].NewItem()
     if marker_number > 1:
-        row.Text[
-            0
-        ] = f"There are {str(marker_number)} markers in this timeline."
+        row.Text[0] = f"There are {str(marker_number)} markers in this timeline."
     elif marker_number == 1:
         row.Text[0] = f"There is {str(marker_number)} marker in this timeline."
     else:
