@@ -27,7 +27,7 @@ markerColorID = "Marker Color"
 deleteMarkersByColorID = "Delete Marker By Color"
 timelinesID = "Timelines in the mediapool"
 copyMarkersFromSpecifiedTimelineID = "Copy markers from specified timeline"
-markerCountDisplayID = "Marker count display"
+markerCountDisplayID = "Display marker counts"
 undoCopyAndPasteMarkersID = "Undo copy and paste markers"
 
 # UI components
@@ -77,7 +77,7 @@ functional_component = ui.HGroup(
                 "Weight": 0,
             },
             [
-                ui.VGap(),
+                ui.VGap(0.5),
                 ui.Label(
                     {
                         "Text": "Count Marker",
@@ -88,7 +88,7 @@ functional_component = ui.HGroup(
                         },
                     }
                 ),
-                ui.VGap(),
+                ui.VGap(0.5),
                 ui.Label(
                     {
                         "Text": "Remove Marker By Color",
@@ -99,7 +99,7 @@ functional_component = ui.HGroup(
                         },
                     }
                 ),
-                ui.VGap(),
+                ui.VGap(0.5),
                 ui.Label(
                     {
                         "Text": "Copy Markers From",
@@ -118,11 +118,11 @@ functional_component = ui.HGroup(
                 "Weight": 0,
             },
             [
-                ui.Button(
+                ui.LineEdit(
                     {
                         "ID": markerCountDisplayID,
-                        "Text": "22 Markers",
-                        "Flat": True,
+                        "Text": "",
+                        "ReadOnly": True,
                     }
                 ),
                 ui.ComboBox({"ID": markerColorID, "Weight": 10}),
@@ -238,6 +238,7 @@ win = dispatcher.AddWindow(
                     "Weight": 1,
                     "AutoScroll": True,
                     "SortingEnabled": False,
+                    "TabKeyNavigation": True,
                 }
             ),
         ],
@@ -294,7 +295,9 @@ start_up_markers = read_all_marker()
 itm = win.GetItems()
 itm[markerColorID].AddItems(marker_colors)
 
-all_timelines: list[str] = [timeline.GetName() for timeline in get_all_timeline()]
+all_timelines: list[str] = [
+    timeline.GetName() for timeline in get_all_timeline()
+]
 itm[timelinesID].AddItems(all_timelines)
 
 
@@ -305,16 +308,20 @@ def on_close(ev):
 
 
 def on_click_marker_counter(ev):
+    itm[markerCountDisplayID].Clear()
     current_timeline = project.GetCurrentTimeline()
     marker_number = len(current_timeline.GetMarkers())
     row = itm[pathTreeID].NewItem()
     if marker_number > 1:
-        row.Text[0] = f"There are {str(marker_number)} markers in this timeline."
+        row.Text[
+            0
+        ] = f"There are {str(marker_number)} markers in this timeline."
     elif marker_number == 1:
         row.Text[0] = f"There is {str(marker_number)} marker in this timeline."
     else:
         row.Text[0] = f"There is no marker in this timeline."
     itm[pathTreeID].AddTopLevelItem(row)
+    itm[markerCountDisplayID].Insert(str(marker_number))
 
 
 def on_click_output_browse_button(ev):
@@ -382,7 +389,9 @@ win.On[deleteMarkersByColorID].Clicked = on_click_delete_marker_by_color_button
 win.On[
     copyMarkersFromSpecifiedTimelineID
 ].Clicked = on_click_copy_markers_from_specified_timeline
-win.On[undoCopyAndPasteMarkersID].Clicked = on_click_undo_copy_and_paste_markers_button
+win.On[
+    undoCopyAndPasteMarkersID
+].Clicked = on_click_undo_copy_and_paste_markers_button
 
 if __name__ == "__main__":
     win.Show()
