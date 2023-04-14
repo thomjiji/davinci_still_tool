@@ -1,9 +1,6 @@
 from resolve_init import GetResolve
 
 
-# Constants
-
-
 # Initialize Resolve base object.
 resolve = GetResolve()
 project = resolve.GetProjectManager().GetCurrentProject()
@@ -157,7 +154,7 @@ functional_component = ui.HGroup(
                 ui.Button(
                     {
                         "ID": countMarkerID,
-                        "Text": "Count Marker",
+                        "Text": "Count",
                         "Weight": 2,
                         "AlignRight": True,
                     }
@@ -345,9 +342,10 @@ def on_close(ev):
 
 
 def on_click_marker_counter(ev):
+    itm[markerCountDisplayID].Clear()
+    current_timeline = project.GetCurrentTimeline()
+
     if itm[markerColorForCountingID].CurrentText == "All":
-        itm[markerCountDisplayID].Clear()
-        current_timeline = project.GetCurrentTimeline()
         marker_number = len(current_timeline.GetMarkers())
 
         # Display marker counting message in the path tree.
@@ -364,11 +362,11 @@ def on_click_marker_counter(ev):
             row.Text[0] = f"There is no marker in this timeline."
 
         itm[pathTreeID].AddTopLevelItem(row)
+
+        # Display marker counting in the LineEdit
         itm[markerCountDisplayID].Insert(str(marker_number))
 
     else:
-        itm[markerCountDisplayID].Clear()
-        current_timeline = project.GetCurrentTimeline()
         marker_about_to_count = itm[markerColorForCountingID].CurrentText
 
         marker_number = 0
@@ -376,7 +374,6 @@ def on_click_marker_counter(ev):
             if marker_properties["color"] == marker_about_to_count:
                 marker_number += 1
         itm[markerCountDisplayID].Insert(str(marker_number))
-
 
 
 def on_click_output_browse_button(ev):
