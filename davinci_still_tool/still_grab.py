@@ -23,7 +23,8 @@ testClickID = "Test Click"
 pathTreeID = "Path Tree"
 countMarkerID = "Count Marker"
 browseOutputFileManagerID = "Browse File Manager"
-markerColorID = "Marker Color"
+markerColorForRemovalID = "Marker color for removal"
+markerColorForCountingID = "Marker color for counting"
 deleteMarkersByColorID = "Delete Marker By Color"
 timelinesID = "Timelines in the mediapool"
 copyMarkersFromSpecifiedTimelineID = "Copy markers from specified timeline"
@@ -77,7 +78,7 @@ functional_component = ui.HGroup(
                 "Weight": 0,
             },
             [
-                ui.VGap(0.5),
+                ui.VGap(1),
                 ui.Label(
                     {
                         "Text": "Count Marker",
@@ -91,6 +92,17 @@ functional_component = ui.HGroup(
                 ui.VGap(0.5),
                 ui.Label(
                     {
+                        "Text": "Count Marker By Color",
+                        "Weight": 0,
+                        "Alignment": {
+                            "AlignRight": True,
+                            "AlignVCenter": True,
+                        },
+                    }
+                ),
+                ui.VGap(1),
+                ui.Label(
+                    {
                         "Text": "Remove Marker By Color",
                         "Weight": 0,
                         "Alignment": {
@@ -99,7 +111,7 @@ functional_component = ui.HGroup(
                         },
                     }
                 ),
-                ui.VGap(0.5),
+                ui.VGap(1),
                 ui.Label(
                     {
                         "Text": "Copy Markers From",
@@ -125,7 +137,8 @@ functional_component = ui.HGroup(
                         "ReadOnly": True,
                     }
                 ),
-                ui.ComboBox({"ID": markerColorID, "Weight": 10}),
+                ui.ComboBox({"ID": markerColorForCountingID, "Weight": 10}),
+                ui.ComboBox({"ID": markerColorForRemovalID, "Weight": 10}),
                 ui.ComboBox(
                     {
                         "ID": timelinesID,
@@ -140,6 +153,7 @@ functional_component = ui.HGroup(
                 "Weight": 0,
             },
             [
+                ui.VGap(),
                 ui.Button(
                     {
                         "ID": countMarkerID,
@@ -170,6 +184,7 @@ functional_component = ui.HGroup(
                 "Weight": 0,
             },
             [
+                ui.VGap(),
                 ui.VGap(),
                 ui.VGap(),
                 ui.Button(
@@ -265,6 +280,27 @@ marker_colors = [
 ]
 
 
+marker_colors_for_counting = [
+    "All",
+    "Blue",
+    "Cyan",
+    "Green",
+    "Yellow",
+    "Red",
+    "Pink",
+    "Purple",
+    "Fuchsia",
+    "Rose",
+    "Lavender",
+    "Sky",
+    "Mint",
+    "Lemon",
+    "Sand",
+    "Cocoa",
+    "Cream",
+]
+
+
 # General functions
 def get_all_timeline():
     """
@@ -293,7 +329,8 @@ start_up_markers = read_all_marker()
 
 # Get items of the UI
 itm = win.GetItems()
-itm[markerColorID].AddItems(marker_colors)
+itm[markerColorForRemovalID].AddItems(marker_colors)
+itm[markerColorForCountingID].AddItems(marker_colors_for_counting)
 
 all_timelines: list[str] = [
     timeline.GetName() for timeline in get_all_timeline()
@@ -308,20 +345,38 @@ def on_close(ev):
 
 
 def on_click_marker_counter(ev):
-    itm[markerCountDisplayID].Clear()
-    current_timeline = project.GetCurrentTimeline()
-    marker_number = len(current_timeline.GetMarkers())
-    row = itm[pathTreeID].NewItem()
-    if marker_number > 1:
-        row.Text[
-            0
-        ] = f"There are {str(marker_number)} markers in this timeline."
-    elif marker_number == 1:
-        row.Text[0] = f"There is {str(marker_number)} marker in this timeline."
+    if itm[markerColorForCountingID].CurrentText == "All":
+        itm[markerCountDisplayID].Clear()
+        current_timeline = project.GetCurrentTimeline()
+        marker_number = len(current_timeline.GetMarkers())
+
+        # Display marker counting message in the path tree.
+        row = itm[pathTreeID].NewItem()
+        if marker_number > 1:
+            row.Text[
+                0
+            ] = f"There are {str(marker_number)} markers in this timeline."
+        elif marker_number == 1:
+            row.Text[
+                0
+            ] = f"There is {str(marker_number)} marker in this timeline."
+        else:
+            row.Text[0] = f"There is no marker in this timeline."
+
+        itm[pathTreeID].AddTopLevelItem(row)
+        itm[markerCountDisplayID].Insert(str(marker_number))
+
     else:
-        row.Text[0] = f"There is no marker in this timeline."
-    itm[pathTreeID].AddTopLevelItem(row)
-    itm[markerCountDisplayID].Insert(str(marker_number))
+        itm[markerCountDisplayID].Clear()
+        current_timeline = project.GetCurrentTimeline()
+        marker_about_to_count = itm[markerColorForCountingID].CurrentText
+
+        marker_number = 0
+        for marker_properties in current_timeline.GetMarkers().values():
+            if marker_properties["color"] == marker_about_to_count:
+                marker_number += 1
+        itm[markerCountDisplayID].Insert(str(marker_number))
+
 
 
 def on_click_output_browse_button(ev):
@@ -332,7 +387,7 @@ def on_click_output_browse_button(ev):
 
 def on_click_delete_marker_by_color_button(ev):
     current_timeline = project.GetCurrentTimeline()
-    markers_about_to_delete = itm[markerColorID].CurrentText
+    markers_about_to_delete = itm[markerColorForRemovalID].CurrentText
     if not bool(current_timeline.GetMarkers()):
         row = itm[pathTreeID].NewItem()
         row.Text[0] = f"There is no marker to delete!"
