@@ -428,8 +428,12 @@ def on_click_copy_markers_from_specified_timeline(ev):
     all_markers = markers_copy_target.GetMarkers()  # type: ignore
 
     for color in marker_colors:
+        # If there is no marker in the current timeline, then skip this for loop
+        # and add marker directly.
         if not bool(current_timeline.GetMarkers()):
             break
+        # If the current timeline has markers, use this for loop to delete
+        # markers of all color in turn.
         else:
             current_timeline.DeleteMarkersByColor(color)
     for key in all_markers:
