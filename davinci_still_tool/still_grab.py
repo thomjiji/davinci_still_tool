@@ -61,139 +61,135 @@ output_path_select_component = ui.HGroup(
     ],
 )
 
-
-functional_component = ui.HGroup(
+marker_number_display_area = ui.HGroup(
     {
         "Spacing": 5,
         "Weight": 0,
     },
     [
-        ui.HGap(),
-        ui.VGroup(
+        ui.Label(
             {
-                "Spacing": 5,
-                "Weight": 0,
-            },
-            [
-                ui.VGap(1),
-                ui.Label(
-                    {
-                        "Text": "Count Marker",
-                        "Weight": 0,
-                        "Alignment": {
-                            "AlignRight": True,
-                            "AlignVCenter": True,
-                        },
-                    }
-                ),
-                ui.VGap(0.5),
-                ui.Label(
-                    {
-                        "Text": "Count Marker By Color",
-                        "Weight": 0,
-                        "Alignment": {
-                            "AlignRight": True,
-                            "AlignVCenter": True,
-                        },
-                    }
-                ),
-                ui.VGap(1),
-                ui.Label(
-                    {
-                        "Text": "Remove Marker By Color",
-                        "Weight": 0,
-                        "Alignment": {
-                            "AlignRight": True,
-                            "AlignVCenter": True,
-                        },
-                    }
-                ),
-                ui.VGap(1),
-                ui.Label(
-                    {
-                        "Text": "Copy Markers From",
-                        "Weight": 0,
-                        "Alignment": {
-                            "AlignRight": True,
-                            "AlignVCenter": False,
-                        },
-                    }
-                ),
-            ],
+                "Text": "Marker Number",
+                "Weight": 1,
+            }
         ),
-        ui.VGroup(
+        ui.LineEdit(
             {
-                "Spacing": 5,
-                "Weight": 0,
-            },
-            [
-                ui.LineEdit(
-                    {
-                        "ID": markerCountDisplayID,
-                        "Text": "",
-                        "ReadOnly": True,
-                    }
-                ),
-                ui.ComboBox({"ID": markerColorForCountingID, "Weight": 10}),
-                ui.ComboBox({"ID": markerColorForRemovalID, "Weight": 10}),
-                ui.ComboBox(
-                    {
-                        "ID": timelinesID,
-                        "Weight": 10,
-                    }
-                ),
-            ],
+                "ID": markerCountDisplayID,
+                "Weight": 1,
+                "Text": "",
+                "ReadOnly": True,
+            }
         ),
-        ui.VGroup(
+    ],
+)
+
+count_marker_by_color_area = ui.HGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.Label(
             {
-                "Spacing": 5,
-                "Weight": 0,
-            },
-            [
-                ui.VGap(),
-                ui.Button(
-                    {
-                        "ID": countMarkerID,
-                        "Text": "Count",
-                        "Weight": 2,
-                        "AlignRight": True,
-                    }
-                ),
-                ui.Button(
-                    {
-                        "ID": deleteMarkersByColorID,
-                        "Text": "Remove",
-                        "Weight": 0,
-                    }
-                ),
-                ui.Button(
-                    {
-                        "ID": copyMarkersFromSpecifiedTimelineID,
-                        "Text": "Copy and Paste",
-                        "Weight": 0,
-                    }
-                ),
-            ],
+                "Text": "Count Marker By Color",
+                "Weight": 1,
+            }
         ),
-        ui.VGroup(
+        ui.ComboBox({"ID": markerColorForCountingID, "Weight": 1}),
+    ],
+)
+
+count_marker_button = ui.HGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.Button(
             {
-                "Spacing": 5,
-                "Weight": 0,
-            },
-            [
-                ui.VGap(),
-                ui.VGap(),
-                ui.VGap(),
-                ui.Button(
-                    {
-                        "ID": undoCopyAndPasteMarkersID,
-                        "Text": "Undo",
-                        "Weight": 0,
-                    }
-                ),
-            ],
+                "ID": countMarkerID,
+                "Text": "Count",
+                "Weight": 1,
+                "AlignRight": True,
+            }
         ),
-        ui.HGap(),
+    ],
+)
+
+remove_marker_by_color_area = ui.HGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.Label(
+            {
+                "Text": "Remove Marker By Color",
+                "Weight": 1,
+            }
+        ),
+        ui.ComboBox({"ID": markerColorForRemovalID, "Weight": 1}),
+    ],
+)
+
+remove_marker_button = ui.HGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.Button(
+            {
+                "ID": deleteMarkersByColorID,
+                "Text": "Remove",
+                "Weight": 1,
+            }
+        ),
+    ],
+)
+
+copy_markers_from_area = ui.HGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.Label(
+            {
+                "Text": "Copy Markers From",
+                "Weight": 1,
+            }
+        ),
+        ui.ComboBox(
+            {
+                "ID": timelinesID,
+                "Weight": 1,
+            }
+        ),
+    ],
+)
+
+copy_and_paste_button_and_undo = ui.HGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.Button(
+            {
+                "ID": copyMarkersFromSpecifiedTimelineID,
+                "Text": "Copy and Paste",
+                "Weight": 1,
+            }
+        ),
+        ui.Button(
+            {
+                "ID": undoCopyAndPasteMarkersID,
+                "Text": "Undo",
+                "Weight": 1,
+            }
+        ),
     ],
 )
 
@@ -205,10 +201,10 @@ win = dispatcher.AddWindow(
         "Geometry": [
             500,
             300,
-            800,
-            600,
+            350,
+            400,
         ],
-        "WindowTitle": "Grab Still",
+        "WindowTitle": "DaVinci Still & Marker Tool",
     },
     ui.VGroup(
         {
@@ -217,7 +213,20 @@ win = dispatcher.AddWindow(
         },
         [
             output_path_select_component,
-            functional_component,
+            #
+            ui.VGap(),
+            marker_number_display_area,
+            count_marker_by_color_area,
+            count_marker_button,
+            #
+            ui.VGap(),
+            remove_marker_by_color_area,
+            remove_marker_button,
+            #
+            ui.VGap(),
+            copy_markers_from_area,
+            copy_and_paste_button_and_undo,
+            #
             ui.Label(
                 {
                     "StyleSheet": "max-height: 1px; background-color: rgb(10,10,10)",
@@ -244,10 +253,10 @@ win = dispatcher.AddWindow(
             ui.Tree(
                 {
                     "ID": pathTreeID,
+                    "Weight": 1,
                     "AlternatingRowColors": True,
                     "HeaderHidden": True,
                     "SelectionMode": "ExtendedSelection",
-                    "Weight": 1,
                     "AutoScroll": True,
                     "SortingEnabled": False,
                     "TabKeyNavigation": True,
