@@ -335,7 +335,7 @@ def marker_number_display_message(
     marker_number: int, count_colored_marker: str = "All"
 ):
     """
-    Accept a marker numbe parameter, and a parameter whether to count marker by
+    Accept a marker number parameter, and a parameter whether to count marker by
     color, add the appropriate message to the pathTree, and display the message
     to the user.
     """
@@ -353,9 +353,13 @@ def marker_number_display_message(
         if marker_number == 0:
             row.Text[0] = f"There is no marker in this timeline."
         elif marker_number == 1:
-            row.Text[0] = f"There is {marker_number} marker in this timeline."
+            row.Text[
+                0
+            ] = f"There is {marker_number} {count_colored_marker} marker in this timeline."
         else:
-            row.Text[0] = f"There are {marker_number} markers in this timeline."
+            row.Text[
+                0
+            ] = f"There are {marker_number} {count_colored_marker} markers in this timeline."
         itm[pathTreeID].AddTopLevelItem(row)
 
 
