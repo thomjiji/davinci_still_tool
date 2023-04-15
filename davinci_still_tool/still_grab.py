@@ -199,8 +199,8 @@ win = dispatcher.AddWindow(
     {
         "ID": "myWindow",
         "Geometry": [
-            500,
-            300,
+            750,
+            200,
             350,
             400,
         ],
@@ -214,16 +214,16 @@ win = dispatcher.AddWindow(
         [
             output_path_select_component,
             #
-            ui.VGap(),
+            ui.VGap(1),
             marker_number_display_area,
             count_marker_by_color_area,
             count_marker_button,
             #
-            ui.VGap(),
+            ui.VGap(1),
             remove_marker_by_color_area,
             remove_marker_button,
             #
-            ui.VGap(),
+            ui.VGap(1),
             copy_markers_from_area,
             copy_and_paste_button_and_undo,
             #
