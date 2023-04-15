@@ -331,6 +331,34 @@ def read_all_marker():
     return markers
 
 
+def marker_number_display_message(
+    marker_number: int, count_colored_marker: str = "All"
+):
+    """
+    Accept a marker numbe parameter, and a parameter whether to count marker by
+    color, add the appropriate message to the pathTree, and display the message
+    to the user.
+    """
+    if count_colored_marker == "All":
+        row = itm[pathTreeID].NewItem()
+        if marker_number == 0:
+            row.Text[0] = f"There is no marker in this timeline."
+        elif marker_number == 1:
+            row.Text[0] = f"There is {marker_number} marker in this timeline."
+        else:
+            row.Text[0] = f"There are {marker_number} markers in this timeline."
+        itm[pathTreeID].AddTopLevelItem(row)
+    elif count_colored_marker in marker_colors:
+        row = itm[pathTreeID].NewItem()
+        if marker_number == 0:
+            row.Text[0] = f"There is no marker in this timeline."
+        elif marker_number == 1:
+            row.Text[0] = f"There is {marker_number} marker in this timeline."
+        else:
+            row.Text[0] = f"There are {marker_number} markers in this timeline."
+        itm[pathTreeID].AddTopLevelItem(row)
+
+
 start_up_markers = read_all_marker()
 
 # Get items of the UI
@@ -356,32 +384,17 @@ def on_click_marker_counter(ev):
 
     if itm[markerColorForCountingID].CurrentText == "All":
         marker_number = len(current_timeline.GetMarkers())
-
-        # Display marker counting message in the path tree.
-        row = itm[pathTreeID].NewItem()
-        if marker_number > 1:
-            row.Text[
-                0
-            ] = f"There are {str(marker_number)} markers in this timeline."
-        elif marker_number == 1:
-            row.Text[
-                0
-            ] = f"There is {str(marker_number)} marker in this timeline."
-        else:
-            row.Text[0] = f"There is no marker in this timeline."
-
-        itm[pathTreeID].AddTopLevelItem(row)
-
-        # Display marker counting in the LineEdit
+        marker_number_display_message(marker_number)
         itm[markerCountDisplayID].Insert(str(marker_number))
-
     else:
-        marker_about_to_count = itm[markerColorForCountingID].CurrentText
-
+        marker_about_to_count: str = itm[markerColorForCountingID].CurrentText
         marker_number = 0
         for marker_properties in current_timeline.GetMarkers().values():
             if marker_properties["color"] == marker_about_to_count:
                 marker_number += 1
+        marker_number_display_message(
+            marker_number, count_colored_marker=marker_about_to_count
+        )
         itm[markerCountDisplayID].Insert(str(marker_number))
 
 
