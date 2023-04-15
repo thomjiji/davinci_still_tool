@@ -404,7 +404,10 @@ def on_click_marker_counter(ev):
 
 def on_click_output_browse_button(ev):
     selected = fusion.RequestDir()
-    itm[outputPathID].Text = str(selected)[:-1]
+    if selected == None:
+        itm[outputPathID].Text = ""
+    else:
+        itm[outputPathID].Text = str(selected)[:-1]
     return selected
 
 
