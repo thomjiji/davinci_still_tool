@@ -27,6 +27,7 @@ timelinesID = "Timelines in the mediapool"
 copyMarkersFromSpecifiedTimelineID = "Copy markers from specified timeline"
 markerCountDisplayID = "Display marker counts"
 undoCopyAndPasteMarkersID = "Undo copy and paste markers"
+clearMessagesID = "Clear messages"
 
 # UI components
 output_path_select_component = ui.HGroup(
@@ -248,6 +249,14 @@ win = dispatcher.AddWindow(
                             },
                         },
                     ),
+                    ui.HGap(),
+                    ui.Button(
+                        {
+                            "ID": clearMessagesID,
+                            "Text": "Clear",
+                            "Weight": 1,
+                        }
+                    ),
                 ],
             ),
             ui.Tree(
@@ -466,6 +475,10 @@ def on_click_undo_copy_and_paste_markers_button(ev):
         print(o)
 
 
+def on_click_clear_messages_button(ev):
+    itm[pathTreeID].Clear()
+
+
 # Assign events handlers
 win.On.myWindow.Close = on_close
 win.On[countMarkerID].Clicked = on_click_marker_counter
@@ -477,6 +490,7 @@ win.On[
 win.On[
     undoCopyAndPasteMarkersID
 ].Clicked = on_click_undo_copy_and_paste_markers_button
+win.On[clearMessagesID].Clicked = on_click_clear_messages_button
 
 if __name__ == "__main__":
     win.Show()
