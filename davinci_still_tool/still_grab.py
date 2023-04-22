@@ -1,6 +1,5 @@
 from resolve_init import GetResolve
 
-
 # Initialize Resolve base object.
 resolve = GetResolve()
 project = resolve.GetProjectManager().GetCurrentProject()
@@ -194,7 +193,6 @@ copy_and_paste_button_and_undo = ui.HGroup(
     ],
 )
 
-
 # Compose the whole UI
 win = dispatcher.AddWindow(
     {
@@ -294,7 +292,6 @@ marker_colors = [
     "Cream",
 ]
 
-
 marker_colors_for_counting = [
     "All",
     "Blue",
@@ -364,7 +361,8 @@ def marker_number_display_message(
         elif marker_number == 1:
             row.Text[
                 0
-            ] = f"There is {marker_number} {count_colored_marker} marker in this timeline."
+            ] = f"There is {marker_number} {count_colored_marker} marker in " \
+                f"this timeline."
         else:
             row.Text[
                 0
@@ -413,7 +411,7 @@ def on_click_marker_counter(ev):
 
 def on_click_output_browse_button(ev):
     selected = fusion.RequestDir()
-    if selected == None:
+    if selected is None:
         itm[outputPathID].Text = ""
     else:
         itm[outputPathID].Text = str(selected)[:-1]
