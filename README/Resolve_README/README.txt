@@ -1,4 +1,4 @@
-Updated as of 9 May 2022
+Updated as of 22 Nov 2022
 ----------------------------
 In this package, you will find a brief introduction to the Scripting API for DaVinci Resolve Studio. Apart from this README.txt file, this package contains folders containing the basic import
 modules for scripting access (DaVinciResolve.py) and some representative examples.
@@ -19,7 +19,7 @@ DaVinci Resolve scripting requires one of the following to be installed (for all
 
     Lua 5.1
     Python 2.7 64-bit
-    Python 3.6 64-bit
+    Python >= 3.6 64-bit
 
 
 Using a script
@@ -171,6 +171,9 @@ Project
   GetRenderResolutions(format, codec)             --> [{Resolution}]     # Returns list of resolutions applicable for the given render format (string) and render codec (string). Returns full list of resolutions if no argument is provided. Each element in the list is a dictionary with 2 keys "Width" and "Height".
   RefreshLUTList()                                --> Bool               # Refreshes LUT List
   GetUniqueId()                                   --> string             # Returns a unique ID for the project item
+  InsertAudioToCurrentTrackAtPlayhead(mediaPath,  --> Bool               # Inserts the media specified by mediaPath (string) with startOffsetInSamples (int) and durationInSamples (int) at the playhead on a selected track on the Fairlight page. Returns True if successful, otherwise False.
+          startOffsetInSamples, durationInSamples)
+  LoadBurnInPreset(presetName)                    --> Bool               # Loads user defined data burn in preset for project when supplied presetName (string). Returns true if successful.
 
 MediaStorage
   GetMountedVolumeList()                          --> [paths...]         # Returns list of folder paths corresponding to mounted volumes displayed in Resolve’s Media Storage.
@@ -193,16 +196,18 @@ MediaPool
   CreateTimelineFromClips(name, clip1, clip2,...) --> Timeline           # Creates new timeline with specified name, and appends the specified MediaPoolItem objects.
   CreateTimelineFromClips(name, [clips])          --> Timeline           # Creates new timeline with specified name, and appends the specified MediaPoolItem objects.
   CreateTimelineFromClips(name, [{clipInfo}])     --> Timeline           # Creates new timeline with specified name, appending the list of clipInfos specified as a dict of "mediaPoolItem", "startFrame" (int), "endFrame" (int).
-  ImportTimelineFromFile(filePath, {importOptions}) --> Timeline         # Creates timeline based on parameters within given file and optional importOptions dict, with support for the keys:
-                                                                         # "timelineName": string, specifies the name of the timeline to be created
-                                                                         # "importSourceClips": Bool, specifies whether source clips should be imported, True by default
+  ImportTimelineFromFile(filePath, {importOptions}) --> Timeline         # Creates timeline based on parameters within given file (AAF/EDL/XML/FCPXML/DRT/ADL) and optional importOptions dict, with support for the keys:
+                                                                         # "timelineName": string, specifies the name of the timeline to be created. Not valid for DRT import
+                                                                         # "importSourceClips": Bool, specifies whether source clips should be imported, True by default. Not valid for DRT import
                                                                          # "sourceClipsPath": string, specifies a filesystem path to search for source clips if the media is inaccessible in their original path and if "importSourceClips" is True
-                                                                         # "sourceClipsFolders": List of Media Pool folder objects to search for source clips if the media is not present in current folder and if "importSourceClips" is False
+                                                                         # "sourceClipsFolders": List of Media Pool folder objects to search for source clips if the media is not present in current folder and if "importSourceClips" is False. Not valid for DRT import
                                                                          # "interlaceProcessing": Bool, specifies whether to enable interlace processing on the imported timeline being created. valid only for AAF import
   DeleteTimelines([timeline])                     --> Bool               # Deletes specified timelines in the media pool.
   GetCurrentFolder()                              --> Folder             # Returns currently selected Folder.
   SetCurrentFolder(Folder)                        --> Bool               # Sets current folder by given Folder.
   DeleteClips([clips])                            --> Bool               # Deletes specified clips or timeline mattes in the media pool
+  ImportFolderFromFile(filePath, sourceClipsPath="") --> Bool            # Returns true if import from given DRB filePath is successful, false otherwise
+                                                                         # sourceClipsPath is a string that specifies a filesystem path to search for source clips if the media is inaccessible in their original path, empty by default
   DeleteFolders([subfolders])                     --> Bool               # Deletes specified subfolders in the media pool
   MoveClips([clips], targetFolder)                --> Bool               # Moves specified clips to target folder.
   MoveFolders([folders], targetFolder)            --> Bool               # Moves specified folders to target folder.
@@ -225,6 +230,7 @@ Folder
   GetSubFolderList()                              --> [folders...]       # Returns a list of subfolders in the folder.
   GetIsFolderStale()                              --> bool               # Returns true if folder is stale in collaboration mode, false otherwise
   GetUniqueId()                                   --> string             # Returns a unique ID for the media pool folder
+  Export(filePath)                                --> bool               # Returns true if export of DRB folder to filePath is successful, false otherwise
 
 MediaPoolItem
   GetName()                                       --> string             # Returns the clip name.
@@ -250,7 +256,7 @@ MediaPoolItem
   GetClipColor()                                  --> string             # Returns the item color as a string.
   SetClipColor(colorName)                         --> Bool               # Sets the item color based on the colorName (string).
   ClearClipColor()                                --> Bool               # Clears the item color.
-  GetClipProperty(propertyName=None)              --> string|dict        # Returns the property value for the key 'propertyName'.
+  GetClipProperty(propertyName=None)              --> string|dict        # Returns the property value for the key 'propertyName'. 
                                                                          # If no argument is specified, a dict of all clip properties is returned. Check the section below for more information.
   SetClipProperty(propertyName, propertyValue)    --> Bool               # Sets the given property to propertyValue (string). Check the section below for more information.
   LinkProxyMedia(proxyMediaFilePath)              --> Bool               # Links proxy media located at path specified by arg 'proxyMediaFilePath' with the current clip. 'proxyMediaFilePath' should be absolute clip path.
@@ -301,7 +307,7 @@ Timeline
                                                                          # "sourceClipsFolders": string, list of Media Pool folder objects to search for source clips if the media is not present in current folder
 
   Export(fileName, exportType, exportSubtype)     --> Bool               # Exports timeline to 'fileName' as per input exportType & exportSubtype format.
-                                                                         # Refer to section "Looking up timeline exports properties" for information on the parameters.
+                                                                         # Refer to section "Looking up timeline export properties" for information on the parameters.
   GetSetting(settingName)                         --> string             # Returns value of timeline setting (indicated by settingName : string). Check the section below for more information.
   SetSetting(settingName, settingValue)           --> Bool               # Sets timeline setting (indicated by settingName : string) to the value (settingValue : string). Check the section below for more information.
   InsertGeneratorIntoTimeline(generatorName)      --> TimelineItem       # Inserts a generator (indicated by generatorName : string) into the timeline.
@@ -362,6 +368,7 @@ TimelineItem
   GetStereoLeftFloatingWindowParams()             --> {keyframes...}     # For the LEFT eye -> returns a dict (offset -> dict) of keyframe offsets and respective floating window params. Value at particular offset includes the left, right, top and bottom floating window values.
   GetStereoRightFloatingWindowParams()            --> {keyframes...}     # For the RIGHT eye -> returns a dict (offset -> dict) of keyframe offsets and respective floating window params. Value at particular offset includes the left, right, top and bottom floating window values.
   GetNumNodes()                                   --> int                # Returns the number of nodes in the current graph for the timeline item
+  ApplyArriCdlLut()                               --> Bool               # Applies ARRI CDL and LUT. Returns True if successful, False otherwise.
   SetLUT(nodeIndex, lutPath)                      --> Bool               # Sets LUT on the node mapping the node index provided, 1 <= nodeIndex <= total number of nodes.
                                                                          # The lutPath can be an absolute path, or a relative path (based off custom LUT paths or the master LUT path).
                                                                          # The operation is successful for valid lut paths that Resolve has already discovered (see Project.RefreshLUTList).
@@ -376,8 +383,12 @@ TimelineItem
   SelectTakeByIndex(idx)                          --> Bool               # Selects a take by index, 1 <= idx <= number of takes.
   FinalizeTake()                                  --> Bool               # Finalizes take selection.
   CopyGrades([tgtTimelineItems])                  --> Bool               # Copies the current grade to all the items in tgtTimelineItems list. Returns True on success and False if any error occurred.
+  SetClipEnabled(Bool)                            --> Bool               # Sets clip enabled based on argument.
+  GetClipEnabled()                                --> Bool               # Gets clip enabled status.
   UpdateSidecar()                                 --> Bool               # Updates sidecar file for BRAW clips or RMD file for R3D clips.
   GetUniqueId()                                   --> string             # Returns a unique ID for the timeline item
+  LoadBurnInPreset(presetName)                    --> Bool               # Loads user defined data burn in preset for clip when supplied presetName (string). Returns true if successful.
+  GetNodeLabel(nodeIndex)                         --> string             # Returns the label of the node at nodeIndex.
 
 Gallery
   GetAlbumName(galleryStillAlbum)                 --> string             # Returns the name of the GalleryStillAlbum object 'galleryStillAlbum'.
@@ -478,11 +489,6 @@ exportType can be one of the following constants:
     - resolve.EXPORT_DRT
     - resolve.EXPORT_EDL
     - resolve.EXPORT_FCP_7_XML
-    - resolve.EXPORT_FCPXML_1_3
-    - resolve.EXPORT_FCPXML_1_4
-    - resolve.EXPORT_FCPXML_1_5
-    - resolve.EXPORT_FCPXML_1_6
-    - resolve.EXPORT_FCPXML_1_7
     - resolve.EXPORT_FCPXML_1_8
     - resolve.EXPORT_FCPXML_1_9
     - resolve.EXPORT_FCPXML_1_10
@@ -492,6 +498,7 @@ exportType can be one of the following constants:
     - resolve.EXPORT_TEXT_TAB
     - resolve.EXPORT_DOLBY_VISION_VER_2_9
     - resolve.EXPORT_DOLBY_VISION_VER_4_0
+    - resolve.EXPORT_DOLBY_VISION_VER_5_1
 exportSubtype can be one of the following enums:
     - resolve.EXPORT_NONE
     - resolve.EXPORT_AAF_NEW
@@ -503,6 +510,16 @@ Please note that exportSubType is a required parameter for resolve.EXPORT_AAF an
 When exportType is resolve.EXPORT_AAF, valid exportSubtype values are resolve.EXPORT_AAF_NEW and resolve.EXPORT_AAF_EXISTING.
 When exportType is resolve.EXPORT_EDL, valid exportSubtype values are resolve.EXPORT_CDL, resolve.EXPORT_SDL, resolve.EXPORT_MISSING_CLIPS and resolve.EXPORT_NONE.
 Note: Replace 'resolve.' when using the constants above, if a different Resolve class instance name is used.
+
+Unsupported exportType types
+---------------------------------
+Starting with DaVinci Resolve 18.1, the following export types are not supported:
+    - resolve.EXPORT_FCPXML_1_3
+    - resolve.EXPORT_FCPXML_1_4
+    - resolve.EXPORT_FCPXML_1_5
+    - resolve.EXPORT_FCPXML_1_6
+    - resolve.EXPORT_FCPXML_1_7
+
 
 Looking up Timeline item properties
 -----------------------------------
