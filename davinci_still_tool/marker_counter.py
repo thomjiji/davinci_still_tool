@@ -200,8 +200,8 @@ win = dispatcher.AddWindow(
         "Geometry": [
             750,
             200,
-            350,
             400,
+            500,
         ],
         "WindowTitle": "DaVinci Still & Marker Tool",
     },
