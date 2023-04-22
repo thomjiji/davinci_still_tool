@@ -348,7 +348,7 @@ def marker_number_display_message(
     if count_colored_marker == "All":
         row = itm[pathTreeID].NewItem()
         if marker_number == 0:
-            row.Text[0] = f"There is no marker in this timeline."
+            row.Text[0] = "There is no marker in this timeline."
         elif marker_number == 1:
             row.Text[0] = f"There is {marker_number} marker in this timeline."
         else:
@@ -357,16 +357,17 @@ def marker_number_display_message(
     elif count_colored_marker in marker_colors:
         row = itm[pathTreeID].NewItem()
         if marker_number == 0:
-            row.Text[0] = f"There is no marker in this timeline."
+            row.Text[0] = "There is no marker in this timeline."
         elif marker_number == 1:
-            row.Text[
-                0
-            ] = f"There is {marker_number} {count_colored_marker} marker in " \
+            row.Text[0] = (
+                f"There is {marker_number} {count_colored_marker} marker in "
                 f"this timeline."
+            )
         else:
-            row.Text[
-                0
-            ] = f"There are {marker_number} {count_colored_marker} markers in this timeline."
+            row.Text[0] = (
+                f"There are {marker_number} {count_colored_marker} markers in "
+                f"this timeline."
+            )
         itm[pathTreeID].AddTopLevelItem(row)
 
 
@@ -423,7 +424,7 @@ def on_click_delete_marker_by_color_button(ev):
     markers_about_to_delete = itm[markerColorForRemovalID].CurrentText
     if not bool(current_timeline.GetMarkers()):
         row = itm[pathTreeID].NewItem()
-        row.Text[0] = f"There is no marker to delete!"
+        row.Text[0] = "There is no marker to delete!"
         itm[pathTreeID].AddTopLevelItem(row)
     else:
         current_timeline.DeleteMarkersByColor(markers_about_to_delete)
