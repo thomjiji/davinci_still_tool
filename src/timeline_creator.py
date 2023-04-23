@@ -141,6 +141,51 @@ def create_timeline(timeline_name: str, width: int, height: int):
     return current_timeline.SetSetting("timelineFrameRate", str(24))
 
 
+def get_video_clips_in_date_group_source_folder(date_group: str) -> list:
+    source_clip_list = []
+
+    date_group_folder_structure = get_subfolder_by_name(
+        date_group
+    ).GetSubFolderList()  # type: ignore
+
+    for folder in date_group_folder_structure:
+        if folder.GetName() == "Source":
+            for each_video_reel in folder.GetSubFolderList():
+                reel_clips = each_video_reel.GetClipList()
+                for clip in reel_clips:
+                    source_clip_list.append(clip)
+
+    return source_clip_list
+
+
+def get_clips_by_clip_color(date_group: str, clip_color: str) -> list:
+    source_clip_list = get_video_clips_in_date_group_source_folder(date_group)
+    return [
+        clip
+        for clip in source_clip_list
+        if clip.GetClipProperty("Clip Color") == clip_color
+    ]
+
+
+def append_to_timeline(clip_list: list):
+    pass
+
+
+def get_scene(date_group: str, clip_color: str) -> list:
+    scene_list = []
+    for clip in get_clips_by_clip_color(date_group, clip_color):
+        scene_list.append(clip.GetClipProperty("Scene"))
+    return scene_list
+
+
+def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
+    return [
+        clip
+        for clip in get_clips_by_clip_color(date_group, clip_color)
+        if clip.GetClipProperty("Scene") == scene
+    ]
+
+
 # Get items of the UI
 itm = win.GetItems()
 
