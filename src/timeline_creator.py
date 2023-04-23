@@ -18,6 +18,7 @@ create_timeline_id = "Create timeline"
 timeline_resolution_width_id = "Timeline resolution (width)"
 timeline_resolution_height_id = "Timeline resolution (height)"
 timeline_name_id = "Timeline name"
+append_to_timeline_id = "Append clips to timeline"
 
 timeline_creating_input_area = ui.VGroup(
     {
@@ -115,6 +116,14 @@ win = dispatcher.AddWindow(
         },
         [
             timeline_creating_input_area,
+            ui.VGap(),
+            ui.Button(
+                {
+                    "ID": append_to_timeline_id,
+                    "Text": "Append Clips to Timeline",
+                    "Weight": 0,
+                }
+            ),
         ],
     ),
 )
@@ -171,11 +180,11 @@ def append_to_timeline(clip_list: list):
     pass
 
 
-def get_scene(date_group: str, clip_color: str) -> list:
+def get_scene(date_group: str, clip_color: str) -> set:
     scene_list = []
     for clip in get_clips_by_clip_color(date_group, clip_color):
         scene_list.append(clip.GetClipProperty("Scene"))
-    return scene_list
+    return set(scene_list)
 
 
 def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
@@ -203,9 +212,18 @@ def on_click_create_timeline_button(ev):
     create_timeline(name, width, height)
 
 
+def on_click_append_to_timeline_button(ev):
+    date_group_name = itm[timeline_name_id].Text
+    best_take_clips = get_clips_by_clip_color(date_group_name, "Pink")
+    for s in get_scene(date_group_name, "Pink"):
+        clips = get_clips_by_scene(date_group_name, "Pink", s)
+        media_pool.AppendToTimeline(clips)
+
+
 # Assign events handlers
 win.On.myWindow.Close = on_close
 win.On[create_timeline_id].Clicked = on_click_create_timeline_button
+win.On[append_to_timeline_id].Clicked = on_click_append_to_timeline_button
 
 if __name__ == "__main__":
     win.Show()
