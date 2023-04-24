@@ -137,6 +137,12 @@ win = dispatcher.AddWindow(
         },
         [
             timeline_creating_input_area,
+            ui.Label(
+                {
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10,"
+                    "10,10)",
+                }
+            ),
             ui.VGap(),
             ui.Button(
                 {
@@ -172,6 +178,7 @@ def create_timeline(timeline_name: str, width: int, height: int):
     current_timeline.SetSetting("useCustomSettings", "1")
     current_timeline.SetSetting("timelineResolutionWidth", str(width))
     current_timeline.SetSetting("timelineResolutionHeight", str(height))
+
     if (
         itm[mismatched_resolution_handling_id].CurrentText
         == "Scale full frame with crop"
