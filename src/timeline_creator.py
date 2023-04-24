@@ -125,7 +125,7 @@ win = dispatcher.AddWindow(
         "Geometry": [
             750,
             200,
-            400,
+            500,
             500,
         ],
         "WindowTitle": "Timeline Creator",
