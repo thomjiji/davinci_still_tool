@@ -19,6 +19,7 @@ timeline_resolution_width_id = "Timeline resolution (width)"
 timeline_resolution_height_id = "Timeline resolution (height)"
 timeline_name_id = "Timeline name"
 append_to_timeline_id = "Append clips to timeline"
+mismatched_resolution_handling_id = "Handling mismatched resolution"
 
 timeline_creating_input_area = ui.VGroup(
     {
@@ -41,7 +42,7 @@ timeline_creating_input_area = ui.VGroup(
                 ui.LineEdit(
                     {
                         "ID": timeline_name_id,
-                        "Weight": 1,
+                        "Weight": 2.2,
                     }
                 ),
             ],
@@ -73,7 +74,7 @@ timeline_creating_input_area = ui.VGroup(
                         "Alignment": {
                             "AlignCenter": True,
                         },
-                        "Weight": 0,
+                        "Weight": 0.15,
                     }
                 ),
                 ui.LineEdit(
@@ -87,10 +88,30 @@ timeline_creating_input_area = ui.VGroup(
                 ),
             ],
         ),
+        ui.HGroup(
+            {
+                "Spacing": 0,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Mismatched Resolution",
+                        "Weight": 1,
+                    }
+                ),
+                ui.ComboBox(
+                    {
+                        "ID": mismatched_resolution_handling_id,
+                        "Weight": 1,
+                    }
+                ),
+            ],
+        ),
         ui.Button(
             {
                 "ID": create_timeline_id,
-                "Text": "Create",
+                "Text": "Create Timeline",
                 "Weight": 0,
             }
         ),
@@ -128,6 +149,13 @@ win = dispatcher.AddWindow(
     ),
 )
 
+mismatched_resolution_handling = [
+    "Scale full frame with crop",
+    "Center crop with no resizing",
+    "Scale entire image to fit",
+    "Stretch full frame with crop",
+]
+
 
 # General functions
 def get_subfolder_by_name(subfolder_name: str):
@@ -144,10 +172,33 @@ def create_timeline(timeline_name: str, width: int, height: int):
     current_timeline.SetSetting("useCustomSettings", "1")
     current_timeline.SetSetting("timelineResolutionWidth", str(width))
     current_timeline.SetSetting("timelineResolutionHeight", str(height))
-    current_timeline.SetSetting(
-        "timelineInputResMismatchBehavior", "scaleToCrop"
-    )
-    return current_timeline.SetSetting("timelineFrameRate", str(24))
+    if (
+        itm[mismatched_resolution_handling_id].CurrentText
+        == "Scale full frame with crop"
+    ):
+        current_timeline.SetSetting(
+            "timelineInputResMismatchBehavior", "scaleToCrop"
+        )
+    elif (
+        itm[mismatched_resolution_handling_id].CurrentText
+        == "Center crop with no resizing"
+    ):
+        current_timeline.SetSetting(
+            "timelineInputResMismatchBehavior", "centerCrop"
+        )
+    elif (
+        itm[mismatched_resolution_handling_id].CurrentText
+        == "Scale entire image to fit"
+    ):
+        current_timeline.SetSetting(
+            "timelineInputResMismatchBehavior", "scaleToFit"
+        )
+    else:
+        current_timeline.SetSetting(
+            "timelineInputResMismatchBehavior", "stretch"
+        )
+
+        return current_timeline.SetSetting("timelineFrameRate", str(24))
 
 
 def get_video_clips_in_date_group_source_folder(date_group: str) -> list:
@@ -197,6 +248,7 @@ def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
 
 # Get items of the UI
 itm = win.GetItems()
+itm[mismatched_resolution_handling_id].AddItems(mismatched_resolution_handling)
 
 
 # Events handlers
