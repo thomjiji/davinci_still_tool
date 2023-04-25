@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "near-set-tools"
+version = "0.1.0"
+description = ""
+authors = ["thomjiji <hxy449999@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "near_set_tools"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
