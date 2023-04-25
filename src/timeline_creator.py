@@ -281,11 +281,12 @@ def append_to_timeline(date_group: str):
         media_pool.AppendToTimeline(sorted_clips)
 
 
-def get_scene(date_group: str, clip_color: str) -> set:
+def get_scene(date_group: str, clip_color: str) -> list:
     scene_list = []
     for clip in get_clips_by_clip_color(date_group, clip_color):
         scene_list.append(clip.GetClipProperty("Scene"))
-    return set(scene_list)
+    print(sorted(set(scene_list)))
+    return sorted(set(scene_list))
 
 
 def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
