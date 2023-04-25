@@ -20,8 +20,9 @@ timeline_resolution_height_id = "Timeline resolution (height)"
 timeline_name_id = "Timeline name"
 append_to_timeline_id = "Append clips to timeline"
 mismatched_resolution_handling_id = "Handling mismatched resolution"
-date_group_entering_for_clips_append_id = (
-    "Date group for clips appending to timeline by Scene and Shot"
+date_group_for_clips_appending_id = (
+    "Date group (e.g.. DAY_001_20230401) for appending clips to timeline by "
+    "Scene and Shot"
 )
 
 timeline_creating_input_area = ui.VGroup(
@@ -141,7 +142,7 @@ append_clips_timeline_by_scene_shot_area = ui.VGroup(
                 ),
                 ui.LineEdit(
                     {
-                        "ID": date_group_entering_for_clips_append_id,
+                        "ID": date_group_for_clips_appending_id,
                         "Weight": 2.2,
                     }
                 ),
@@ -241,12 +242,12 @@ def create_timeline(timeline_name: str, width: int, height: int):
         return current_timeline.SetSetting("timelineFrameRate", str(24))
 
 
-def get_video_clips_in_date_group_source_folder(date_group: str) -> list:
+def get_clips_in_date_group_source_folder(date_group: str) -> list:
     source_clip_list = []
 
     date_group_folder_structure = get_subfolder_by_name(
         date_group
-    ).GetSubFolderList()  # type: ignore
+    ).GetSubFolderList()
 
     for folder in date_group_folder_structure:
         if folder.GetName() == "Source":
@@ -259,7 +260,7 @@ def get_video_clips_in_date_group_source_folder(date_group: str) -> list:
 
 
 def get_clips_by_clip_color(date_group: str, clip_color: str) -> list:
-    source_clip_list = get_video_clips_in_date_group_source_folder(date_group)
+    source_clip_list = get_clips_in_date_group_source_folder(date_group)
     return [
         clip
         for clip in source_clip_list
@@ -314,7 +315,7 @@ def on_click_create_timeline_button(ev):
 
 
 def on_click_append_to_timeline_button(ev):
-    date_group = itm[date_group_entering_for_clips_append_id].Text
+    date_group = itm[date_group_for_clips_appending_id].Text
     append_to_timeline(date_group)
 
 

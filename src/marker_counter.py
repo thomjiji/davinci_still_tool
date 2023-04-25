@@ -228,7 +228,8 @@ win = dispatcher.AddWindow(
             #
             ui.Label(
                 {
-                    "StyleSheet": "max-height: 1px; background-color: rgb(10,10,10)",
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10,"
+                    "10,10)",
                 }
             ),
             ui.HGroup(
