@@ -437,10 +437,18 @@ itm = win.GetItems()
 itm[markerColorForRemovalID].AddItems(marker_colors)
 itm[markerColorForCountingID].AddItems(marker_colors_for_counting)
 
+# Load all timelines into ComboBox
 all_timelines: list[str] = [
     timeline.GetName() for timeline in get_all_timeline()
 ]
 itm[timelinesID].AddItems(all_timelines)
+
+# Load end frame into copy marker from area's timecode range
+end_frame = DfttTimecode(
+    current_timeline.GetEndFrame(), "auto", 24, False, True
+)
+end_frame_tc = end_frame.timecode_output("smpte")
+itm[end_timecode_id].PlaceholderText = end_frame_tc
 
 
 # Events handlers
