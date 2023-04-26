@@ -30,6 +30,9 @@ undoCopyAndPasteMarkersID = "Undo copy and paste markers"
 clearMessagesID = "Clear messages"
 start_timecode_id = "Start timecode for markers copy and pasting"
 end_timecode_id = "End timecode for markers copy and pasting"
+update_start_and_end_frame_id = (
+    "Update start and end timecode of current timeline"
+)
 
 # UI components
 output_path_select_component = ui.HGroup(
@@ -247,6 +250,13 @@ copy_markers_from_area = ui.VGroup(
                         "Weight": 1,
                     }
                 ),
+                ui.Button(
+                    {
+                        "ID": update_start_and_end_frame_id,
+                        "Text": "Update Timecode",
+                        "Weight": 1,
+                    }
+                ),
             ],
         ),
     ],
@@ -396,6 +406,22 @@ def read_all_marker():
     return markers
 
 
+def load_start_and_end_frames():
+    """
+    Load start and end frame into copy marker from area's timecode range
+    """
+    start_frame = DfttTimecode(
+        current_timeline.GetStartFrame(), "auto", 24, False, True
+    )
+    end_frame = DfttTimecode(
+        current_timeline.GetEndFrame(), "auto", 24, False, True
+    )
+    start_frame_tc = start_frame.timecode_output("smpte")
+    end_frame_tc = end_frame.timecode_output("smpte")
+    itm[start_timecode_id].PlaceholderText = start_frame_tc
+    itm[end_timecode_id].PlaceholderText = end_frame_tc
+
+
 def marker_number_display_message(
     marker_number: int, count_colored_marker: str = "All"
 ):
@@ -442,13 +468,6 @@ all_timelines: list[str] = [
     timeline.GetName() for timeline in get_all_timeline()
 ]
 itm[timelinesID].AddItems(all_timelines)
-
-# Load end frame into copy marker from area's timecode range
-end_frame = DfttTimecode(
-    current_timeline.GetEndFrame(), "auto", 24, False, True
-)
-end_frame_tc = end_frame.timecode_output("smpte")
-itm[end_timecode_id].PlaceholderText = end_frame_tc
 
 
 # Events handlers
@@ -559,6 +578,10 @@ def on_click_clear_messages_button(ev):
     itm[messageTreeID].Clear()
 
 
+def on_click_update_start_and_end_frame_button(ev):
+    load_start_and_end_frames()
+
+
 # Assign events handlers
 win.On.myWindow.Close = on_close
 win.On[countMarkerID].Clicked = on_click_marker_counter
@@ -571,7 +594,11 @@ win.On[
     undoCopyAndPasteMarkersID
 ].Clicked = on_click_undo_copy_and_paste_markers_button
 win.On[clearMessagesID].Clicked = on_click_clear_messages_button
+win.On[
+    update_start_and_end_frame_id
+].Clicked = on_click_update_start_and_end_frame_button
 
 if __name__ == "__main__":
     win.Show()
+    load_start_and_end_frames()
     dispatcher.RunLoop()
