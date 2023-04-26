@@ -9,6 +9,7 @@ packages = [{include = "near_set_tools"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+dftt-timecode = "^0.0.12"
 
 
 [tool.poetry.group.dev.dependencies]

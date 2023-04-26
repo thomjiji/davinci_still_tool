@@ -1,4 +1,5 @@
 from resolve_init import GetResolve
+from dftt_timecode import DfttTimecode
 
 # Initialize Resolve base object.
 resolve = GetResolve()
@@ -491,7 +492,21 @@ def on_click_delete_marker_by_color_button(ev):
 def on_click_copy_markers_from_specified_timeline(ev):
     current_timeline = project.GetCurrentTimeline()
     markers_copy_target = get_timeline_by_name(itm[timelinesID].CurrentText)
-    all_markers = markers_copy_target.GetMarkers()  # type: ignore
+    all_markers = markers_copy_target.GetMarkers()
+
+    if bool(itm[start_timecode_id].Text) or bool(itm[end_timecode_id].Text):
+        start_timecode_range = DfttTimecode(
+            itm[start_timecode_id].Text, "auto", 24, False, True
+        )
+        end_timecode_range = DfttTimecode(
+            itm[end_timecode_id].Text, "auto", 24, False, True
+        )
+        for frame_id in list(all_markers):
+            if (
+                int(frame_id) + 86400 < start_timecode_range
+                or int(frame_id) + 86400 > end_timecode_range
+            ):
+                all_markers.pop(frame_id)
 
     for color in marker_colors:
         # If there is no marker in the current timeline, then skip this for loop
@@ -525,9 +540,9 @@ def on_click_undo_copy_and_paste_markers_button(ev):
         duration = int(mk["duration"])
         note = str(mk["note"])
         name = str(mk["name"])
-        customData = mk["customData"]
+        custom_data = mk["customData"]
         o = current_timeline.AddMarker(
-            mk_frameId, color, name, note, duration, customData
+            mk_frameId, color, name, note, duration, custom_data
         )
         print(o)
 

@@ -419,6 +419,18 @@ files = [
 ]
 
 [[package]]
+name = "dftt-timecode"
+version = "0.0.12"
+description = "Timecode library for film and TV industry, supports HFR and a bunch of cool features"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dftt_timecode-0.0.12-py3-none-any.whl", hash = "sha256:42c2614b9bc63b5c8c621512c3b9d3d8449288ba4f201d5e865f53026fc4536f"},
+    {file = "dftt_timecode-0.0.12.tar.gz", hash = "sha256:9158df98c54dbe8f8df6ed000c0d1ad74cfe777d93287cda36ea6a765d1e49e4"},
+]
+
+[[package]]
 name = "executing"
 version = "1.2.0"
 description = "Get the currently executing AST node of a frame, and other information"
@@ -1921,4 +1933,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "18145926c693fffe34b67ad7ef461975dd096adaefcd64da6fd0036112cd1776"
+content-hash = "8e19eb86b51be8f709ed6e25988ed346aacbbf830ec0635df3c5bb182b78a8af"
