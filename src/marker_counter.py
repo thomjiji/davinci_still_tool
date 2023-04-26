@@ -272,7 +272,7 @@ win = dispatcher.AddWindow(
             400,
             500,
         ],
-        "WindowTitle": "DaVinci Still & Marker Tool",
+        "WindowTitle": "Marker Counter",
     },
     ui.VGroup(
         {
