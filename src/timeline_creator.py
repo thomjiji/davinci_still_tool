@@ -48,7 +48,7 @@ timeline_creating_input_area = ui.VGroup(
                 ui.LineEdit(
                     {
                         "ID": timeline_name_id,
-                        "Weight": 2.2,
+                        "Weight": 2.3,
                     }
                 ),
             ],
@@ -80,7 +80,7 @@ timeline_creating_input_area = ui.VGroup(
                         "Alignment": {
                             "AlignCenter": True,
                         },
-                        "Weight": 0.15,
+                        "Weight": 0.2,
                     }
                 ),
                 ui.LineEdit(
@@ -202,8 +202,8 @@ win = dispatcher.AddWindow(
         "Geometry": [
             750,
             200,
-            500,
             400,
+            500,
         ],
         "WindowTitle": "Timeline Creator",
     },
@@ -214,13 +214,7 @@ win = dispatcher.AddWindow(
         },
         [
             timeline_creating_input_area,
-            ui.Label(
-                {
-                    "StyleSheet": "max-height: 1px; background-color: rgb(10,"
-                    "10,10)",
-                }
-            ),
-            # ui.VGap(1),
+            ui.VGap(1),
             append_clips_timeline_by_scene_shot_area,
             ui.Label(
                 {
