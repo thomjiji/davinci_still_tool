@@ -521,19 +521,47 @@ def on_click_copy_markers_from_specified_timeline(ev):
     markers_copy_target = get_timeline_by_name(itm[timelinesID].CurrentText)
     all_markers = markers_copy_target.GetMarkers()
 
-    if bool(itm[start_timecode_id].Text) or bool(itm[end_timecode_id].Text):
+    if (
+        bool(itm[start_timecode_id].Text) is True
+        and bool(itm[end_timecode_id].Text) is False
+    ):
+        start_timecode_range = DfttTimecode(
+            itm[start_timecode_id].Text, "auto", 24, False, True
+        )
+        end_timecode_range = DfttTimecode(
+            current_timeline.GetEndFrame(), "auto", 24, False, True
+        )
+    elif (
+        bool(itm[start_timecode_id].Text) is False
+        and bool(itm[end_timecode_id].Text) is True
+    ):
+        start_timecode_range = DfttTimecode(
+            "01:00:00:00", "auto", 24, False, True
+        )
+        end_timecode_range = DfttTimecode(
+            itm[end_timecode_id].Text, "auto", 24, False, True
+        )
+    elif bool(itm[start_timecode_id].Text) and bool(itm[end_timecode_id].Text):
         start_timecode_range = DfttTimecode(
             itm[start_timecode_id].Text, "auto", 24, False, True
         )
         end_timecode_range = DfttTimecode(
             itm[end_timecode_id].Text, "auto", 24, False, True
         )
-        for frame_id in list(all_markers):
-            if (
-                int(frame_id) + 86400 < start_timecode_range
-                or int(frame_id) + 86400 > end_timecode_range
-            ):
-                all_markers.pop(frame_id)
+    else:
+        start_timecode_range = DfttTimecode(
+            "01:00:00:00", "auto", 24, False, True
+        )
+        end_timecode_range = DfttTimecode(
+            current_timeline.GetEndFrame(), "auto", 24, False, True
+        )
+
+    for frame_id in list(all_markers):
+        if (
+            int(frame_id) + 86400 < start_timecode_range
+            or int(frame_id) + 86400 > end_timecode_range
+        ):
+            all_markers.pop(frame_id)
 
     for color in marker_colors:
         # If there is no marker in the current timeline, then skip this for loop
@@ -544,6 +572,7 @@ def on_click_copy_markers_from_specified_timeline(ev):
         # markers of all color in turn.
         else:
             current_timeline.DeleteMarkersByColor(color)
+
     for frame_id in all_markers:
         current_timeline.AddMarker(
             frame_id,
