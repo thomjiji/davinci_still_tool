@@ -27,6 +27,8 @@ copyMarkersFromSpecifiedTimelineID = "Copy markers from specified timeline"
 markerCountDisplayID = "Display marker counts"
 undoCopyAndPasteMarkersID = "Undo copy and paste markers"
 clearMessagesID = "Clear messages"
+start_timecode_id = "Start timecode for markers copy and pasting"
+end_timecode_id = "End timecode for markers copy and pasting"
 
 # UI components
 output_path_select_component = ui.HGroup(
@@ -149,46 +151,102 @@ remove_marker_button = ui.HGroup(
     ],
 )
 
-copy_markers_from_area = ui.HGroup(
+copy_markers_from_area = ui.VGroup(
     {
         "Spacing": 5,
         "Weight": 0,
     },
     [
-        ui.Label(
+        ui.HGroup(
             {
-                "Text": "Copy Markers From",
-                "Weight": 1,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Copy Markers From",
+                        "Weight": 1,
+                    }
+                ),
+                ui.ComboBox(
+                    {
+                        "ID": timelinesID,
+                        "Weight": 1,
+                    }
+                ),
+            ],
         ),
-        ui.ComboBox(
+        ui.HGroup(
             {
-                "ID": timelinesID,
-                "Weight": 1,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "In",
+                        "Weight": 1,
+                        "Alignment": {
+                            "AlignRight": True,
+                        },
+                    }
+                ),
+                # ui.HGap(),
+                ui.LineEdit(
+                    {
+                        "ID": start_timecode_id,
+                        "Weight": 1.1,
+                        "PlaceholderText": "01:00:00:00",
+                        "Alignment": {
+                            "AlignHCenter": True,
+                        },
+                    }
+                ),
+                # ui.HGap(0.1),
+                ui.Label(
+                    {
+                        "Text": "to",
+                        "Weight": 0.1,
+                        "Alignment": {
+                            "AlignHCenter": True,
+                        },
+                    }
+                ),
+                # ui.HGap(0.1),
+                ui.LineEdit(
+                    {
+                        "ID": end_timecode_id,
+                        "Weight": 1.1,
+                        "PlaceholderText": "01:00:10:00",
+                        "Alignment": {
+                            "AlignHCenter": True,
+                        },
+                    }
+                ),
+            ],
         ),
-    ],
-)
-
-copy_and_paste_button_and_undo = ui.HGroup(
-    {
-        "Spacing": 5,
-        "Weight": 0,
-    },
-    [
-        ui.Button(
+        ui.HGroup(
             {
-                "ID": copyMarkersFromSpecifiedTimelineID,
-                "Text": "Copy and Paste",
-                "Weight": 1,
-            }
-        ),
-        ui.Button(
-            {
-                "ID": undoCopyAndPasteMarkersID,
-                "Text": "Undo",
-                "Weight": 1,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Button(
+                    {
+                        "ID": copyMarkersFromSpecifiedTimelineID,
+                        "Text": "Copy and Paste",
+                        "Weight": 1,
+                    }
+                ),
+                ui.Button(
+                    {
+                        "ID": undoCopyAndPasteMarkersID,
+                        "Text": "Undo",
+                        "Weight": 1,
+                    }
+                ),
+            ],
         ),
     ],
 )
@@ -224,7 +282,6 @@ win = dispatcher.AddWindow(
             #
             ui.VGap(1),
             copy_markers_from_area,
-            copy_and_paste_button_and_undo,
             #
             ui.Label(
                 {
@@ -445,14 +502,14 @@ def on_click_copy_markers_from_specified_timeline(ev):
         # markers of all color in turn.
         else:
             current_timeline.DeleteMarkersByColor(color)
-    for key in all_markers:
+    for frame_id in all_markers:
         current_timeline.AddMarker(
-            key,
-            all_markers[key]["color"],
-            all_markers[key]["name"],
-            all_markers[key]["note"],
-            all_markers[key]["duration"],
-            all_markers[key]["customData"],
+            frame_id,
+            all_markers[frame_id]["color"],
+            all_markers[frame_id]["name"],
+            all_markers[frame_id]["note"],
+            all_markers[frame_id]["duration"],
+            all_markers[frame_id]["customData"],
         )
 
 
