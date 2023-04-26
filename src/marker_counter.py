@@ -519,68 +519,68 @@ def on_click_delete_marker_by_color_button(ev):
 def on_click_copy_markers_from_specified_timeline(ev):
     current_timeline = project.GetCurrentTimeline()
     markers_copy_target = get_timeline_by_name(itm[timelinesID].CurrentText)
-    all_markers = markers_copy_target.GetMarkers()
+    target_timeline_markers = markers_copy_target.GetMarkers()
 
     if (
         bool(itm[start_timecode_id].Text) is True
         and bool(itm[end_timecode_id].Text) is False
     ):
-        start_timecode_range = DfttTimecode(
+        start_timecode = DfttTimecode(
             itm[start_timecode_id].Text, "auto", 24, False, True
         )
-        end_timecode_range = DfttTimecode(
+        end_timecode = DfttTimecode(
             current_timeline.GetEndFrame(), "auto", 24, False, True
         )
     elif (
         bool(itm[start_timecode_id].Text) is False
         and bool(itm[end_timecode_id].Text) is True
     ):
-        start_timecode_range = DfttTimecode(
-            "01:00:00:00", "auto", 24, False, True
-        )
-        end_timecode_range = DfttTimecode(
+        start_timecode = DfttTimecode("01:00:00:00", "auto", 24, False, True)
+        end_timecode = DfttTimecode(
             itm[end_timecode_id].Text, "auto", 24, False, True
         )
     elif bool(itm[start_timecode_id].Text) and bool(itm[end_timecode_id].Text):
-        start_timecode_range = DfttTimecode(
+        start_timecode = DfttTimecode(
             itm[start_timecode_id].Text, "auto", 24, False, True
         )
-        end_timecode_range = DfttTimecode(
+        end_timecode = DfttTimecode(
             itm[end_timecode_id].Text, "auto", 24, False, True
         )
     else:
-        start_timecode_range = DfttTimecode(
-            "01:00:00:00", "auto", 24, False, True
-        )
-        end_timecode_range = DfttTimecode(
+        start_timecode = DfttTimecode("01:00:00:00", "auto", 24, False, True)
+        end_timecode = DfttTimecode(
             current_timeline.GetEndFrame(), "auto", 24, False, True
         )
 
-    for frame_id in list(all_markers):
+    print(f"Start timecode: {start_timecode}")
+    print(f"End timecode: {end_timecode}")
+
+    # 把目标时间线上小于用户给定的 start timecode 或大于用户给定的 end timecode 的 markers 从
+    # target_timeline_markers 这个 dict 里面删掉。
+    for frame_id in list(target_timeline_markers):
         if (
-            int(frame_id) + 86400 < start_timecode_range
-            or int(frame_id) + 86400 > end_timecode_range
+            int(frame_id) + 86400 < start_timecode
+            or int(frame_id) + 86400 > end_timecode
         ):
-            all_markers.pop(frame_id)
+            target_timeline_markers.pop(frame_id)
 
-    for color in marker_colors:
-        # If there is no marker in the current timeline, then skip this for loop
-        # and add marker directly.
-        if not bool(current_timeline.GetMarkers()):
-            break
-        # If the current timeline has markers, use this for loop to delete
-        # markers of all color in turn.
-        else:
-            current_timeline.DeleteMarkersByColor(color)
+    # 获取当前时间线下所有的 markers。
+    current_timeline_markers = current_timeline.GetMarkers()
+    # 如果当前时间线上在用户给定的 in and out timecode range 内有 marker 的话，那么先把这个范围的
+    # marker 删掉。如果没有，则不执行 DeleteMarkerAtFrame()。
+    for frame_id in current_timeline_markers:
+        if start_timecode < int(frame_id) + 86400 < end_timecode:
+            current_timeline.DeleteMarkerAtFrame(frame_id)
 
-    for frame_id in all_markers:
+    # 最后把目标时间线上我们需要的 markers 添加到当前时间线已经被清理过（删除已经存在的 markers）的范围上。
+    for frame_id in target_timeline_markers:
         current_timeline.AddMarker(
             frame_id,
-            all_markers[frame_id]["color"],
-            all_markers[frame_id]["name"],
-            all_markers[frame_id]["note"],
-            all_markers[frame_id]["duration"],
-            all_markers[frame_id]["customData"],
+            target_timeline_markers[frame_id]["color"],
+            target_timeline_markers[frame_id]["name"],
+            target_timeline_markers[frame_id]["note"],
+            target_timeline_markers[frame_id]["duration"],
+            target_timeline_markers[frame_id]["customData"],
         )
 
 
