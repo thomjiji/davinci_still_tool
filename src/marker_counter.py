@@ -16,7 +16,7 @@ dispatcher = bmd.UIDispatcher(ui)  # type: ignore
 # Declare UI elements ID
 outputPathID = "Output Path"
 testClickID = "Test Click"
-pathTreeID = "Path Tree"
+messageTreeID = "Message Tree"
 countMarkerID = "Count Marker"
 browseOutputFileManagerID = "Browse File Manager"
 markerColorForRemovalID = "Marker color for removal"
@@ -260,7 +260,7 @@ win = dispatcher.AddWindow(
             ),
             ui.Tree(
                 {
-                    "ID": pathTreeID,
+                    "ID": messageTreeID,
                     "Weight": 1,
                     "AlternatingRowColors": True,
                     "HeaderHidden": True,
@@ -347,16 +347,16 @@ def marker_number_display_message(
     to the user.
     """
     if count_colored_marker == "All":
-        row = itm[pathTreeID].NewItem()
+        row = itm[messageTreeID].NewItem()
         if marker_number == 0:
             row.Text[0] = "There is no marker in this timeline."
         elif marker_number == 1:
             row.Text[0] = f"There is {marker_number} marker in this timeline."
         else:
             row.Text[0] = f"There are {marker_number} markers in this timeline."
-        itm[pathTreeID].AddTopLevelItem(row)
+        itm[messageTreeID].AddTopLevelItem(row)
     elif count_colored_marker in marker_colors:
-        row = itm[pathTreeID].NewItem()
+        row = itm[messageTreeID].NewItem()
         if marker_number == 0:
             row.Text[0] = "There is no marker in this timeline."
         elif marker_number == 1:
@@ -369,7 +369,7 @@ def marker_number_display_message(
                 f"There are {marker_number} {count_colored_marker} markers in "
                 f"this timeline."
             )
-        itm[pathTreeID].AddTopLevelItem(row)
+        itm[messageTreeID].AddTopLevelItem(row)
 
 
 start_up_markers = read_all_marker()
@@ -424,9 +424,9 @@ def on_click_delete_marker_by_color_button(ev):
     current_timeline = project.GetCurrentTimeline()
     markers_about_to_delete = itm[markerColorForRemovalID].CurrentText
     if not bool(current_timeline.GetMarkers()):
-        row = itm[pathTreeID].NewItem()
+        row = itm[messageTreeID].NewItem()
         row.Text[0] = "There is no marker to delete!"
-        itm[pathTreeID].AddTopLevelItem(row)
+        itm[messageTreeID].AddTopLevelItem(row)
     else:
         current_timeline.DeleteMarkersByColor(markers_about_to_delete)
 
@@ -476,7 +476,7 @@ def on_click_undo_copy_and_paste_markers_button(ev):
 
 
 def on_click_clear_messages_button(ev):
-    itm[pathTreeID].Clear()
+    itm[messageTreeID].Clear()
 
 
 # Assign events handlers

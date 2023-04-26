@@ -24,6 +24,8 @@ date_group_for_clips_appending_id = (
     "Date group (e.g.. DAY_001_20230401) for appending clips to timeline by "
     "Scene and Shot"
 )
+clear_message_id = "Clear messages"
+message_tree_id = "Message tree"
 
 timeline_creating_input_area = ui.VGroup(
     {
@@ -158,6 +160,41 @@ append_clips_timeline_by_scene_shot_area = ui.VGroup(
     ],
 )
 
+message_tree_area = ui.VGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.HGroup(
+            {
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Messages",
+                        "Weight": 0,
+                        "Alignment": {
+                            "AlignRight": True,
+                            "AlignVCenter": True,
+                        },
+                    },
+                ),
+                ui.HGap(),
+                ui.Button(
+                    {
+                        "ID": clear_message_id,
+                        "Text": "Clear",
+                        "Weight": 1,
+                    }
+                ),
+            ],
+        ),
+    ],
+)
+
 # Compose the whole UI
 win = dispatcher.AddWindow(
     {
@@ -166,7 +203,7 @@ win = dispatcher.AddWindow(
             750,
             200,
             500,
-            500,
+            400,
         ],
         "WindowTitle": "Timeline Creator",
     },
@@ -183,8 +220,28 @@ win = dispatcher.AddWindow(
                     "10,10)",
                 }
             ),
-            ui.VGap(),
+            # ui.VGap(1),
             append_clips_timeline_by_scene_shot_area,
+            ui.Label(
+                {
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10,"
+                    "10,10)",
+                }
+            ),
+            message_tree_area,
+            ui.VGap(1),
+            ui.Tree(
+                {
+                    "ID": message_tree_id,
+                    "Weight": 1,
+                    "AlternatingRowColors": True,
+                    "HeaderHidden": True,
+                    "SelectionMode": "ExtendedSelection",
+                    "AutoScroll": True,
+                    "SortingEnabled": False,
+                    "TabKeyNavigation": True,
+                }
+            ),
         ],
     ),
 )
@@ -320,10 +377,15 @@ def on_click_append_to_timeline_button(ev):
     append_to_timeline(date_group)
 
 
+def on_click_clear_messages_button(ev):
+    itm[message_tree_id].Clear()
+
+
 # Assign events handlers
 win.On.myWindow.Close = on_close
 win.On[create_timeline_id].Clicked = on_click_create_timeline_button
 win.On[append_to_timeline_id].Clicked = on_click_append_to_timeline_button
+win.On[clear_message_id].Clicked = on_click_clear_messages_button
 
 if __name__ == "__main__":
     win.Show()
