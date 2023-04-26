@@ -142,7 +142,7 @@ append_clips_timeline_by_scene_shot_area = ui.VGroup(
                         "Weight": 1,
                     }
                 ),
-                ui.LineEdit(
+                ui.ComboBox(
                     {
                         "ID": date_group_for_clips_appending_id,
                         "Weight": 2.2,
@@ -350,7 +350,14 @@ def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
 
 # Get items of the UI
 itm = win.GetItems()
+
 itm[mismatched_resolution_handling_id].AddItems(mismatched_resolution_handling)
+date_group = [
+    subfolder.GetName()
+    for subfolder in root_folder.GetSubFolderList()
+    if not subfolder.GetName().startswith("_")
+]
+itm[date_group_for_clips_appending_id].AddItems(date_group)
 
 
 # Events handlers
@@ -367,7 +374,7 @@ def on_click_create_timeline_button(ev):
 
 
 def on_click_append_to_timeline_button(ev):
-    date_group = itm[date_group_for_clips_appending_id].Text
+    date_group = itm[date_group_for_clips_appending_id].CurrentText
     append_to_timeline(date_group)
 
 
