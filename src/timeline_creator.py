@@ -324,11 +324,20 @@ def append_to_timeline(date_group: str):
         current_scene_clips: list = get_clips_by_scene(
             date_group, "Pink", scene
         )
+
+        def key_func(x):
+            try:
+                return int(x.GetClipProperty("Shot"))
+            except ValueError:
+                return float("inf")
+
         sorted_clips = sorted(
             current_scene_clips,
-            key=lambda clip: clip.GetClipProperty("Shot"),
+            key=key_func,
             reverse=False,
         )
+        sorted_shot = [clip.GetClipProperty("Shot") for clip in sorted_clips]
+        print(sorted_shot)
         media_pool.AppendToTimeline(sorted_clips)
 
 
