@@ -336,7 +336,6 @@ def get_scene(date_group: str, clip_color: str) -> list:
     scene_list = []
     for clip in get_clips_by_clip_color(date_group, clip_color):
         scene_list.append(clip.GetClipProperty("Scene"))
-    print(sorted(set(scene_list)))
     return sorted(set(scene_list))
 
 
@@ -352,12 +351,12 @@ def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
 itm = win.GetItems()
 
 itm[mismatched_resolution_handling_id].AddItems(mismatched_resolution_handling)
-date_group = [
+date_groups = [
     subfolder.GetName()
     for subfolder in root_folder.GetSubFolderList()
     if not subfolder.GetName().startswith("_")
 ]
-itm[date_group_for_clips_appending_id].AddItems(date_group)
+itm[date_group_for_clips_appending_id].AddItems(date_groups)
 
 
 # Events handlers
@@ -376,6 +375,10 @@ def on_click_create_timeline_button(ev):
 def on_click_append_to_timeline_button(ev):
     date_group = itm[date_group_for_clips_appending_id].CurrentText
     append_to_timeline(date_group)
+    for scene in get_scene(date_group, "Pink"):
+        row = itm[message_tree_id].NewItem()
+        row.Text[0] = f'Add "Scene {scene}" into timeline.'
+        itm[message_tree_id].AddTopLevelItem(row)
 
 
 def on_click_clear_messages_button(ev):
