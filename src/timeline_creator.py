@@ -321,6 +321,7 @@ def get_clips_by_clip_color(date_group: str, clip_color: str) -> list:
 
 def append_to_timeline(date_group: str):
     for scene in get_scene(date_group, "Pink"):
+        # Get all clips of current scene (such as "1B")
         current_scene_clips: list = get_clips_by_scene(
             date_group, "Pink", scene
         )
@@ -331,13 +332,16 @@ def append_to_timeline(date_group: str):
             except ValueError:
                 return float("inf")
 
+        # Sort current scene all clips based on their Shot number
         sorted_clips = sorted(
             current_scene_clips,
             key=key_func,
             reverse=False,
         )
+
         sorted_shot = [clip.GetClipProperty("Shot") for clip in sorted_clips]
-        print(sorted_shot)
+        print(f'Added SCENE "{scene}" SHOT "{sorted_shot}" into timeline.')
+
         media_pool.AppendToTimeline(sorted_clips)
 
 
