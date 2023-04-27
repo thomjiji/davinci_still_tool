@@ -1,3 +1,5 @@
+import re
+
 from resolve_init import GetResolve
 
 # Initialize Resolve base object.
@@ -319,6 +321,23 @@ def get_clips_by_clip_color(date_group: str, clip_color: str) -> list:
     ]
 
 
+def shot_sorting_handler(clip):
+    try:
+        return int(clip.GetClipProperty("Shot"))
+    except ValueError:
+        return float("inf")
+
+
+def scene_sorting_handler(scene: str):
+    try:
+        return int(scene)
+    except ValueError:
+        try:
+            return int(re.split(r"[+\-&#@$*a-zA-Z\u4e00-\u9fa5]", scene)[0])
+        except ValueError:
+            return float("inf")
+
+
 def append_to_timeline(date_group: str):
     for scene in get_scene(date_group, "Pink"):
         # Get all clips of current scene (such as "1B")
@@ -326,18 +345,8 @@ def append_to_timeline(date_group: str):
             date_group, "Pink", scene
         )
 
-        def key_func(x):
-            try:
-                return int(x.GetClipProperty("Shot"))
-            except ValueError:
-                return float("inf")
-
         # Sort current scene all clips based on their Shot number
-        sorted_clips = sorted(
-            current_scene_clips,
-            key=key_func,
-            reverse=False,
-        )
+        sorted_clips = sorted(current_scene_clips, key=shot_sorting_handler)
 
         sorted_shot = [clip.GetClipProperty("Shot") for clip in sorted_clips]
         print(f'Added SCENE "{scene}" SHOT "{sorted_shot}" into timeline.')
@@ -349,7 +358,9 @@ def get_scene(date_group: str, clip_color: str) -> list:
     scene_list = []
     for clip in get_clips_by_clip_color(date_group, clip_color):
         scene_list.append(clip.GetClipProperty("Scene"))
-    return sorted(set(scene_list))
+    sorted_scene_list = sorted(set(scene_list), key=scene_sorting_handler)
+    print(sorted_scene_list)
+    return sorted_scene_list
 
 
 def get_clips_by_scene(date_group: str, clip_color: str, scene: str) -> list:
