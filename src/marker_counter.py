@@ -33,6 +33,10 @@ end_timecode_id = "End timecode for markers copy and pasting"
 update_start_and_end_frame_id = (
     "Update start and end timecode of current timeline"
 )
+count_marker_current_timeline_id = (
+    "Displays the name of the timeline for which markers are currently being "
+    "counted"
+)
 
 # UI components
 output_path_select_component = ui.HGroup(
@@ -67,51 +71,71 @@ output_path_select_component = ui.HGroup(
     ],
 )
 
-marker_number_display_area = ui.HGroup(
+marker_count_area = ui.VGroup(
     {
         "Spacing": 5,
         "Weight": 0,
     },
     [
-        ui.Label(
+        ui.HGroup(
             {
-                "Text": "Marker Number",
-                "Weight": 1,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Marker Number",
+                        "Weight": 1,
+                    }
+                ),
+                ui.LineEdit(
+                    {
+                        "ID": markerCountDisplayID,
+                        "Weight": 2.2,
+                        "Text": "",
+                        "ReadOnly": True,
+                    }
+                ),
+            ],
         ),
-        ui.LineEdit(
+        ui.HGroup(
             {
-                "ID": markerCountDisplayID,
-                "Weight": 1,
-                "Text": "",
-                "ReadOnly": True,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Current Timeline",
+                        "Weight": 1,
+                    }
+                ),
+                ui.LineEdit(
+                    {
+                        "ID": count_marker_current_timeline_id,
+                        "Weight": 2.2,
+                        "Text": "",
+                        "ReadOnly": True,
+                    }
+                ),
+            ],
         ),
-    ],
-)
-
-count_marker_by_color_area = ui.HGroup(
-    {
-        "Spacing": 5,
-        "Weight": 0,
-    },
-    [
-        ui.Label(
+        ui.HGroup(
             {
-                "Text": "Count Marker By Color",
-                "Weight": 1,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Count Marker By Color",
+                        "Weight": 1,
+                    }
+                ),
+                ui.ComboBox({"ID": markerColorForCountingID, "Weight": 1}),
+            ],
         ),
-        ui.ComboBox({"ID": markerColorForCountingID, "Weight": 1}),
-    ],
-)
-
-count_marker_button = ui.HGroup(
-    {
-        "Spacing": 5,
-        "Weight": 0,
-    },
-    [
         ui.Button(
             {
                 "ID": countMarkerID,
@@ -123,28 +147,27 @@ count_marker_button = ui.HGroup(
     ],
 )
 
-remove_marker_by_color_area = ui.HGroup(
+remove_marker_by_color_area = ui.VGroup(
     {
         "Spacing": 5,
         "Weight": 0,
     },
     [
-        ui.Label(
+        ui.HGroup(
             {
-                "Text": "Remove Marker By Color",
-                "Weight": 1,
-            }
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Remove Marker By Color",
+                        "Weight": 1,
+                    }
+                ),
+                ui.ComboBox({"ID": markerColorForRemovalID, "Weight": 1}),
+            ],
         ),
-        ui.ComboBox({"ID": markerColorForRemovalID, "Weight": 1}),
-    ],
-)
-
-remove_marker_button = ui.HGroup(
-    {
-        "Spacing": 5,
-        "Weight": 0,
-    },
-    [
         ui.Button(
             {
                 "ID": deleteMarkersByColorID,
@@ -196,7 +219,6 @@ copy_markers_from_area = ui.VGroup(
                         },
                     }
                 ),
-                # ui.HGap(),
                 ui.LineEdit(
                     {
                         "ID": start_timecode_id,
@@ -207,7 +229,6 @@ copy_markers_from_area = ui.VGroup(
                         },
                     }
                 ),
-                # ui.HGap(0.1),
                 ui.Label(
                     {
                         "Text": "to",
@@ -217,7 +238,6 @@ copy_markers_from_area = ui.VGroup(
                         },
                     }
                 ),
-                # ui.HGap(0.1),
                 ui.LineEdit(
                     {
                         "ID": end_timecode_id,
@@ -283,13 +303,10 @@ win = dispatcher.AddWindow(
             output_path_select_component,
             #
             ui.VGap(1),
-            marker_number_display_area,
-            count_marker_by_color_area,
-            count_marker_button,
+            marker_count_area,
             #
             ui.VGap(1),
             remove_marker_by_color_area,
-            remove_marker_button,
             #
             ui.VGap(1),
             copy_markers_from_area,
@@ -476,9 +493,12 @@ def on_close(ev):
     dispatcher.ExitLoop()
 
 
-def on_click_marker_counter(ev):
+def on_click_count_marker(ev):
     itm[markerCountDisplayID].Clear()
+    itm[count_marker_current_timeline_id].Clear()
+
     current_timeline = project.GetCurrentTimeline()
+    itm[count_marker_current_timeline_id].Insert(current_timeline.GetName())
 
     if itm[markerColorForCountingID].CurrentText == "All":
         marker_number = len(current_timeline.GetMarkers())
@@ -613,7 +633,7 @@ def on_click_update_start_and_end_frame_button(ev):
 
 # Assign events handlers
 win.On.myWindow.Close = on_close
-win.On[countMarkerID].Clicked = on_click_marker_counter
+win.On[countMarkerID].Clicked = on_click_count_marker
 win.On[browseOutputFileManagerID].Clicked = on_click_output_browse_button
 win.On[deleteMarkersByColorID].Clicked = on_click_delete_marker_by_color_button
 win.On[
