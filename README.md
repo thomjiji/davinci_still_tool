@@ -1,3 +1,11 @@
-ui.VGap()：自适应的 Gap，随着你调节窗口大小而自动增加或缩小 Gap。
+# Usage
 
-ui.VGap(1)：而当我们给定一个数值，则 Gap 的值固定，不会随着手动调节窗口大小而改变。
+Copy all files under src directory to this path, and it will be shown up in DaVinci Resolve > Menu bar > Workspace >
+Workflow Integration Plugins:
+
+`/Library/Application Support/Blackmagic Design/DaVinci Resolve/Workflow Integration Plugins/`
+
+If `Workflow Integration Plugins` directory is not present, just create it using Finder
+or `mkdir "Workflow Integration Plugins"`.
+
+# Notes
