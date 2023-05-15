@@ -1,0 +1,3 @@
+class MediaPoolItem:
+    def GetName(self):
+        ...
