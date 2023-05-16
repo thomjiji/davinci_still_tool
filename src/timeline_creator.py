@@ -306,11 +306,15 @@ def get_clips_in_date_group_source_folder(date_group: str) -> list[MediaPoolItem
     date_group_folder_structure = get_subfolder_by_name(date_group).GetSubFolderList()
 
     for folder in date_group_folder_structure:
-        if folder.GetName() == "Source":
+        if folder.GetName() == "Source" and bool(folder.GetSubFolderList()):
             for each_video_reel in folder.GetSubFolderList():
                 reel_clips = each_video_reel.GetClipList()
                 for clip in reel_clips:
                     source_clip_list.append(clip)
+        else:
+            all_clips = folder.GetClipList()
+            for clip in all_clips:
+                source_clip_list.append(clip)
 
     return source_clip_list
 
@@ -343,7 +347,7 @@ def get_clips_by_clip_color(date_group: str, clip_color: str) -> list[MediaPoolI
     ]
 
 
-def shot_sorting_handler(clip):
+def shot_sorting_handler(clip: MediaPoolItem):
     try:
         return int(clip.GetClipProperty("Shot"))
     except ValueError:
