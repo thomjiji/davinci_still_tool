@@ -421,8 +421,8 @@ def get_clips_by_scene(
 
     Returns
     -------
-    list
-        A list of MediaPoolItems.
+    list[MediaPoolItem]
+        A list of MediaPoolItems of that specified scene.
 
     """
     return [
