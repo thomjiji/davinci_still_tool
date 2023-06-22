@@ -30,13 +30,12 @@ undoCopyAndPasteMarkersID = "Undo copy and paste markers"
 clearMessagesID = "Clear messages"
 start_timecode_id = "Start timecode for markers copy and pasting"
 end_timecode_id = "End timecode for markers copy and pasting"
-update_start_and_end_frame_id = (
-    "Update start and end timecode of current timeline"
-)
+update_start_and_end_frame_id = "Update start and end timecode of current timeline"
 count_marker_current_timeline_id = (
-    "Displays the name of the timeline for which markers are currently being "
-    "counted"
+    "Displays the name of the timeline for which markers are currently being " "counted"
 )
+remove_markers_by_range_start_timecode_id = "Remove markers by range start timecode"
+remove_markers_by_range_end_timecode_id = "Remove markers by range end timecode"
 
 # UI components
 output_path_select_component = ui.HGroup(
@@ -178,6 +177,58 @@ remove_marker_by_color_area = ui.VGroup(
     ],
 )
 
+remove_marker_between_timecode_range_area = ui.VGroup(
+    {
+        "Spacing": 5,
+        "Weight": 0,
+    },
+    [
+        ui.HGroup(
+            {
+                "Spacing": 5,
+                "Weight": 0,
+            },
+            [
+                ui.Label(
+                    {
+                        "Text": "Remove Markers Between",
+                        "Weight": 1,
+                    }
+                ),
+                ui.LineEdit(
+                    {
+                        "ID": remove_markers_by_range_start_timecode_id,
+                        "Weight": 1.1,
+                        "PlaceholderText": "01:00:00:00",
+                        "Alignment": {
+                            "AlignHCenter": True,
+                        },
+                    }
+                ),
+                ui.Label(
+                    {
+                        "Text": "and",
+                        "Weight": 0.1,
+                        "Alignment": {
+                            "AlignHCenter": True,
+                        },
+                    }
+                ),
+                ui.LineEdit(
+                    {
+                        "ID": remove_markers_by_range_end_timecode_id,
+                        "Weight": 1.1,
+                        "PlaceholderText": "01:00:00:00",
+                        "Alignment": {
+                            "AlignHCenter": True,
+                        },
+                    }
+                ),
+            ],
+        )
+    ],
+)
+
 copy_markers_from_area = ui.VGroup(
     {
         "Spacing": 5,
@@ -304,17 +355,29 @@ win = dispatcher.AddWindow(
             #
             ui.VGap(1),
             marker_count_area,
+            ui.Label(
+                {
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10," "10,10)",
+                }
+            ),
             #
             ui.VGap(1),
             remove_marker_by_color_area,
+            #
+            ui.VGap(1),
+            remove_marker_between_timecode_range_area,
+            ui.Label(
+                {
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10," "10,10)",
+                }
+            ),
             #
             ui.VGap(1),
             copy_markers_from_area,
             #
             ui.Label(
                 {
-                    "StyleSheet": "max-height: 1px; background-color: rgb(10,"
-                    "10,10)",
+                    "StyleSheet": "max-height: 1px; background-color: rgb(10," "10,10)",
                 }
             ),
             ui.HGroup(
@@ -401,10 +464,7 @@ marker_colors_for_counting = [
 
 # General functions
 def get_all_timeline():
-    """
-    Get all existing timelines. Return a list containing all the timeline
-    object.
-    """
+    """Get all existing timelines. Return a list containing all the timeline object."""
     all_timeline = []
     for timeline_index in range(1, project.GetTimelineCount() + 1, 1):
         all_timeline.append(project.GetTimelineByIndex(timeline_index))
@@ -424,15 +484,12 @@ def read_all_marker():
 
 
 def load_start_and_end_frames():
-    """
-    Load start and end frame into copy marker from area's timecode range
-    """
+    """Load start and end frame into copy marker from area's timecode range."""
+    current_timeline = project.GetCurrentTimeline()
     start_frame = DfttTimecode(
         current_timeline.GetStartFrame(), "auto", 24, False, True
     )
-    end_frame = DfttTimecode(
-        current_timeline.GetEndFrame(), "auto", 24, False, True
-    )
+    end_frame = DfttTimecode(current_timeline.GetEndFrame(), "auto", 24, False, True)
     start_frame_tc = start_frame.timecode_output("smpte")
     end_frame_tc = end_frame.timecode_output("smpte")
     itm[start_timecode_id].PlaceholderText = start_frame_tc
@@ -479,11 +536,10 @@ start_up_markers = read_all_marker()
 itm = win.GetItems()
 itm[markerColorForRemovalID].AddItems(marker_colors)
 itm[markerColorForCountingID].AddItems(marker_colors_for_counting)
+itm[markerColorForCountingID].InsertSeparator(1)
 
 # Load all timelines into ComboBox
-all_timelines: list[str] = [
-    timeline.GetName() for timeline in get_all_timeline()
-]
+all_timelines: list[str] = [timeline.GetName() for timeline in get_all_timeline()]
 itm[timelinesID].AddItems(all_timelines)
 
 
@@ -556,16 +612,12 @@ def on_click_copy_markers_from_specified_timeline(ev):
         and bool(itm[end_timecode_id].Text) is True
     ):
         start_timecode = DfttTimecode("01:00:00:00", "auto", 24, False, True)
-        end_timecode = DfttTimecode(
-            itm[end_timecode_id].Text, "auto", 24, False, True
-        )
+        end_timecode = DfttTimecode(itm[end_timecode_id].Text, "auto", 24, False, True)
     elif bool(itm[start_timecode_id].Text) and bool(itm[end_timecode_id].Text):
         start_timecode = DfttTimecode(
             itm[start_timecode_id].Text, "auto", 24, False, True
         )
-        end_timecode = DfttTimecode(
-            itm[end_timecode_id].Text, "auto", 24, False, True
-        )
+        end_timecode = DfttTimecode(itm[end_timecode_id].Text, "auto", 24, False, True)
     else:
         start_timecode = DfttTimecode("01:00:00:00", "auto", 24, False, True)
         end_timecode = DfttTimecode(
@@ -639,9 +691,7 @@ win.On[deleteMarkersByColorID].Clicked = on_click_delete_marker_by_color_button
 win.On[
     copyMarkersFromSpecifiedTimelineID
 ].Clicked = on_click_copy_markers_from_specified_timeline
-win.On[
-    undoCopyAndPasteMarkersID
-].Clicked = on_click_undo_copy_and_paste_markers_button
+win.On[undoCopyAndPasteMarkersID].Clicked = on_click_undo_copy_and_paste_markers_button
 win.On[clearMessagesID].Clicked = on_click_clear_messages_button
 win.On[
     update_start_and_end_frame_id
