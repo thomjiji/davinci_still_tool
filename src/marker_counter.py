@@ -1,8 +1,7 @@
-from resolve_init import GetResolve
 from dftt_timecode import DfttTimecode
 
 # Initialize Resolve base object.
-resolve = GetResolve()
+resolve = bmd.scriptapp("Resolve")
 project = resolve.GetProjectManager().GetCurrentProject()
 media_pool = project.GetMediaPool()
 root_folder = media_pool.GetRootFolder()

@@ -1,10 +1,9 @@
 import re
 
-from resolve_init import GetResolve
-from type import *
+from dri import MediaPoolItem
 
 # Initialize Resolve base object.
-resolve = GetResolve()
+resolve = bmd.scriptapp("Resolve")
 project = resolve.GetProjectManager().GetCurrentProject()
 media_pool = project.GetMediaPool()
 root_folder = media_pool.GetRootFolder()
@@ -12,9 +11,9 @@ media_storage = resolve.GetMediaStorage()
 current_timeline = project.GetCurrentTimeline()
 
 # Initialize the UI
-fusion = bmd.scriptapp("Fusion")  # type: ignore
+fusion = bmd.scriptapp("Fusion")
 ui = fusion.UIManager
-dispatcher = bmd.UIDispatcher(ui)  # type: ignore
+dispatcher = bmd.UIDispatcher(ui)
 
 # Declare UI elements ID
 create_timeline_id = "Create timeline"

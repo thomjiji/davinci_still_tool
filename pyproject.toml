@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "near-set-tools"
-version = "0.1.0"
+version = "0.0.1"
 description = ""
 authors = ["thomjiji <hxy449999@gmail.com>"]
 license = "MIT"
@@ -8,13 +8,15 @@ readme = "README.md"
 packages = [{include = "near_set_tools"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 dftt-timecode = "^0.0.12"
+dri = {path = "/Users/thom/code/dri"}
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.3.0"
+black = {extras = ["d"], version = "^23.3.0"}
 jupyter = "^1.0.0"
+notebook = "^6.5.4"
 
 [build-system]
 requires = ["poetry-core"]
