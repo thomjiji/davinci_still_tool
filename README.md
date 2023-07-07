@@ -1,3 +1,8 @@
+<p float="left">
+  <img src="static/screenshot_marker_counter.png" alt="Marker Counter" width="400" />
+  <img src="static/screenshot_timeline_creator.png" alt="Timeline Creator" width="400" />
+</p>
+
 # Usage
 
 Copy all files under `src` directory to this path `/Library/Application
