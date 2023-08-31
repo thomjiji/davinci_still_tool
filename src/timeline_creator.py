@@ -15,7 +15,7 @@ fusion = bmd.scriptapp("Fusion")
 ui = fusion.UIManager
 dispatcher = bmd.UIDispatcher(ui)
 
-# Declare UI elements ID
+# Declare UI elements  ID
 create_timeline_id = "Create timeline"
 timeline_resolution_width_id = "Timeline resolution (width)"
 timeline_resolution_height_id = "Timeline resolution (height)"
